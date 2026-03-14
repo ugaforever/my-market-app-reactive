@@ -11,6 +11,7 @@ import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.dto.ItemDTO;
+import ru.ugaforever.reactive.market.model.ReactiveCart;
 import ru.ugaforever.reactive.market.service.ReactiveCartService;
 import ru.ugaforever.reactive.market.service.ReactiveItemService;
 import ru.ugaforever.reactive.market.util.ItemUtils;
@@ -21,11 +22,12 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class ItemController {
+public class ReactiveItemController {
 
     private final ReactiveItemService itemService;
     private final ReactiveCartService cartService;
 
+    //Главная страница проекта с витриной товаров
     @GetMapping({"/items", "/"})
     public Mono<Rendering> getItems(
             @RequestParam(required = false) String search,
@@ -89,6 +91,7 @@ public class ItemController {
                 .collectList();
     }
 
+    //Страница с конкретным товаром
     @GetMapping("/items/{id}")
     public Mono<String> getItemById(@PathVariable Long id,
                                     WebSession session,
@@ -106,57 +109,95 @@ public class ItemController {
     }
 
 
-/*    @PostMapping("/items")
-    public String handleItemAction(
+    //Уменьшение/увеличение количества товара в корзине со страницы товаров в корзине
+    @PostMapping("/items")
+    public Mono<Rendering> handleItemAction(
             @RequestParam Long id,
             @RequestParam String action,
             @RequestParam(required = false) String search,
             @RequestParam(required = false, defaultValue = "NO") String sort,
             @RequestParam(required = false, defaultValue = "1") int pageNumber,
-            @RequestParam(required = false, defaultValue = "5") int pageSize) {
+            @RequestParam(required = false, defaultValue = "5") int pageSize,
+            WebSession session) {
 
         //todo сделать через аспекты наконец-таки !!
         log.info("Received request: id='{}', action='{}', search='{}', sort='{}', pageNumber='{}', pageSize='{}'",
                 id, action, search, sort, pageNumber, pageSize);
 
-
         if (pageNumber < 1) {
             pageNumber = 1;
         }
 
-        // Обработка действий
-        if ("PLUS".equals(action)) {
-            cartService.addToCart(id);
-        } else if ("MINUS".equals(action)) {
-            cartService.removeFromCart(id);
-        }
+        return executeCartAction(session, action, id)
+                .thenReturn(buildRedirect(search, sort, pageNumber, pageSize));
+    }
 
-        // Перенаправляем обратно на страницу с сохранением параметров
-        return "redirect:/items?search=" + (search != null ? search : "")
-                + "&sort=" + sort
-                + "&pageNumber=" + pageNumber
-                + "&pageSize=" + pageSize;
-    }*/
-
-
-/*    @PostMapping("/items/{id}")
-    public ModelAndView handleItemActionById(
+    //Уменьшение/увеличение количества товара в корзине со страницы товара
+    @PostMapping("/items/{id}")
+    public Mono<Rendering>  handleItemActionById(
             @PathVariable Long id,
-            @RequestParam String action) {
+            @RequestParam String action,
+            WebSession session) {
 
-        Item item = itemService.findById(id);
+        System.out.println("=== DEBUG: id=" + id + ", action=" + action);
+        log.info("Received request: id='{}', action='{}'", id, action);
 
-        // Обработка действий
+        return itemService.findById(id)
+                .flatMap(item ->
+                        executeCartAction(session, action, id)
+                                .map(cart -> {
+                                    item.setCount(cart.getCount(id));
+                                    return item;
+                                })
+                )
+                .map(item -> Rendering.view("item")
+                        .modelAttribute("item", item)
+                        .build()
+                );
+    }
+
+    @PostMapping("/items/{id}/plus")
+    public Mono<Rendering> plusItem(@PathVariable Long id, WebSession session) {
+        return cartService.plusItem(session, id)
+                .thenReturn(Rendering.view("redirect:/items/" + id).build());
+    }
+
+    // MINUS - убавить товар
+    @PostMapping("/items/{id}/minus")
+    public Mono<Rendering> minusItem(@PathVariable Long id, WebSession session) {
+        return cartService.minusItem(session, id)
+                .thenReturn(Rendering.view("redirect:/items/" + id).build());
+    }
+
+    // ADD - добавить в корзину (для кнопки CART)
+    @PostMapping("/items/{id}/add")
+    public Mono<Rendering> addToCart(@PathVariable Long id, WebSession session) {
+        return cartService.plusItem(session, id)
+                .thenReturn(Rendering.view("redirect:/items/" + id).build());
+    }
+
+    private Mono<ReactiveCart> executeCartAction(WebSession session, String action, Long itemId) {
         if ("PLUS".equals(action)) {
-            cartService.addToCart(id);
+            return cartService.plusItem(session, itemId);
         } else if ("MINUS".equals(action)) {
-            cartService.removeFromCart(id);
+            return cartService.minusItem(session, itemId);
+        } else if ("DELETE".equals(action)) {
+            return cartService.removeItem(session, itemId);
         }
+        return Mono.empty();
+    }
 
-        ModelAndView modelAndView = new ModelAndView("item");
-        modelAndView.addObject("item", item);
+    private Rendering buildRedirect(String search, String sort, int pageNumber, int pageSize) {
+        String redirectUrl = String.format("/items?search=%s&sort=%s&pageNumber=%d&pageSize=%d",
+                search != null ? search : "",
+                sort,
+                pageNumber,
+                pageSize);
 
-        return modelAndView;
-    }*/
+        return Rendering.redirectTo(redirectUrl).build();
+    }
+
+
+
 }
 
