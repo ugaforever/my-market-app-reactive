@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>404 - Страница не найдена</title>
+    <link th:href="@{/css/error.css}" rel="stylesheet">
+</head>
+<body>
+<div class="error-container">
+    <h1 th:text="${error}">404 - Страница не найдена</h1>
+    <p th:text="${message}">Запрашиваемая страница не существует</p>
+
+    <div class="error-details" th:if="${path}">
+        <p><strong>Путь:</strong> <span th:text="${path}">/some/path</span></p>
+    </div>
+
+    <p><strong>Время:</strong> <span th:text="${timestamp}">2026-02-27</span></p>
+
+    <div class="actions">
+        <a href="/" class="btn">Вернуться на главную</a>
+        <a href="/items" class="btn">К списку товаров</a>
+    </div>
+</div>
+</body>
+</html>

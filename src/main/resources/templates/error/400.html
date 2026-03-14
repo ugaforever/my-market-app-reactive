@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>400 - Неверный запрос</title>
+    <link th:href="@{/css/error.css}" rel="stylesheet">
+</head>
+<body>
+<div class="error-container">
+    <h1 th:text="${error}">400 - Неверный запрос</h1>
+    <p th:text="${message}">Проверьте правильность заполнения полей</p>
+
+    <div class="error-details" th:if="${errors}">
+        <h3>Детали ошибок:</h3>
+        <ul>
+            <li th:each="entry : ${errors}" th:text="|${entry.key}: ${entry.value}|">
+                поле: ошибка
+            </li>
+        </ul>
+    </div>
+
+    <a href="javascript:history.back()" class="btn">Вернуться назад</a>
+</div>
+</body>
+</html>

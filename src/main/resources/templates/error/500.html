@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>500 - Ошибка сервера</title>
+    <link th:href="@{/css/error.css}" rel="stylesheet">
+</head>
+<body>
+<div class="error-container">
+    <h1 th:text="${error}">500 - Ошибка сервера</h1>
+    <p th:text="${message}">Произошла непредвиденная ошибка</p>
+
+    <!-- Показываем техническую информацию только в режиме разработки -->
+    <div class="technical" th:if="${@environment.acceptsProfiles('dev')}" th:utext="${technical}">
+        Stack trace
+    </div>
+
+    <div class="actions">
+        <a href="/" class="btn">Вернуться на главную</a>
+        <a href="/items" class="btn">К списку товаров</a>
+    </div>
+</div>
+</body>
+</html>
