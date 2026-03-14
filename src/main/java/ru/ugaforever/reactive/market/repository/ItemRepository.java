@@ -1,16 +1,22 @@
-/*
-package ru.ugaforever.market.repository;
+package ru.ugaforever.reactive.market.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
-import ru.ugaforever.market.entity.Item;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import ru.ugaforever.reactive.market.entity.Item;
 
 @Repository
-public interface ItemRepository extends JpaRepository<Item, Long> {
+public interface ItemRepository extends ReactiveCrudRepository<Item, Long> {
 
-    Page<Item> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+    // Поиск с пагинацией
+    Flux<Item> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
             String title, String description, Pageable pageable);
+
+    // Подсчет общего количества для пагинации
+    Mono<Long> countByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+            String title, String description);
 }
-*/
+

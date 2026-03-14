@@ -1,21 +1,37 @@
-/*
-package ru.ugaforever.market.config;
+package ru.ugaforever.reactive.market.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import ru.ugaforever.market.entity.Item;
-import ru.ugaforever.market.repository.ItemRepository;
+import reactor.core.publisher.Flux;
+import ru.ugaforever.reactive.market.entity.Item;
+import ru.ugaforever.reactive.market.repository.ItemRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class DatabaseInitializer implements CommandLineRunner {
+
     private final ItemRepository itemRepository;
 
     @Override
+    public void run(String... args) {
+        Flux.range(1, 20)
+                .map(i -> Item.builder()
+                        .title("Товар " + i)
+                        .price(i * 333.33)
+                        .description("Описание " + i)
+                        .imgPath(i + ".jpg")
+                        .build()
+                )
+                .flatMap(itemRepository::save)
+                .collectList()
+                .subscribe();
+    }
+
+
+
+/*    @Override
     public void run(String... args) {
         List<Item> items = new ArrayList<>();
         for (int i = 1; i <= 20; i++) {
@@ -29,6 +45,5 @@ public class DatabaseInitializer implements CommandLineRunner {
 
         itemRepository.saveAll(items);
         System.out.println("Загружено товаров: " + itemRepository.count());
-    }
+    }*/
 }
-*/

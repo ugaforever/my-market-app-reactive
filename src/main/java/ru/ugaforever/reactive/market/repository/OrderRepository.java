@@ -1,29 +1,22 @@
-/*
-package ru.ugaforever.market.repository;
+package ru.ugaforever.reactive.market.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.ugaforever.market.entity.Order;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Mono;
+import ru.ugaforever.reactive.market.entity.Order;
 
-import java.util.List;
-import java.util.Optional;
-
-*/
 /**
- * JPQL запросы с загрузкой List<Item> в один запрос
- * против ленивой инициализации
- *//*
-
+ * R2DBC не поддерживает JOIN FETCH,
+ * поэтому 2 отдельных репозитория OrderRepository, OrderItemRepository
+ *
+ * в JpaRepository были @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.items ORDER BY o.id DESC")
+ */
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface OrderRepository extends ReactiveCrudRepository<Order, Long> {
 
-    @Query("SELECT o FROM Order o LEFT JOIN FETCH o.items WHERE o.id = :id")
-    Optional<Order> findByIdWithItems(@Param("id") Long id);
-
-    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.items ORDER BY o.id DESC")
-    List<Order> findAllWithItems();
+    // Получить заказ
+    Mono<Order> findById(Long id);
 }
-*/
+
+

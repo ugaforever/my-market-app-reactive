@@ -1,10 +1,11 @@
-/*
-package ru.ugaforever.market.entity;
+package ru.ugaforever.reactive.market.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
 @Table(name = "order_items")
 @Data
 @ToString(exclude = "order")
@@ -14,21 +15,41 @@ import lombok.*;
 public class OrderItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @Column("order_id")
+    private Long orderId;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
+    @Column("item_id")
+    private Long itemId;
 
-    @Column(nullable = false)
+    @Transient
+    private Order order;  // Не сохраняется в БД, заполняется отдельным запросом
+
+    @Transient
+    private Item item;    // Не сохраняется в БД, заполняется отдельным запросом
+
+    @Column("price")
     private Double price;  // Цена данного товара на момент заказа
 
-    @Column(nullable = false)
+    @Column("count")
     private Integer count; // Количество данного товара в заказе
+
+    public void setOrder(Order order) {
+        this.order = order;
+        this.orderId = order != null ? order.getId() : null;
+    }
+
+/*    public void setItem(Item item) {
+        this.item = item;
+        this.itemId = item != null ? item.getId() : null;
+        if (item != null && this.title == null) {
+            this.title = item.getTitle(); // Копируем название на момент создания
+        }
+    }*/
+
+    public Double getTotalPrice() {
+        return price * count;
+    }
 }
-*/
+

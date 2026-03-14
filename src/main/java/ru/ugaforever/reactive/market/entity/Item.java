@@ -1,7 +1,11 @@
-/*
-package ru.ugaforever.market.entity;
+package ru.ugaforever.reactive.market.entity;
 
-import jakarta.persistence.*;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,13 +13,9 @@ import lombok.AllArgsConstructor;
 
 import java.util.Objects;
 
-*/
 /**
  * Товары
- *//*
-
-
-@Entity
+ */
 @Table(name = "items")
 @Data
 @NoArgsConstructor
@@ -24,22 +24,21 @@ import java.util.Objects;
 public class Item {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", nullable = false, length = 200)
+    @Column("title")
     private String title;
 
-    @Column(nullable = false, length = 1000)
+    @Column("description")
     private String description;
 
-    @Column(nullable = false)
+    @Column("price")
     private Double price;
 
-    @Column(name = "img_path")
+    @Column("img_path")
     private String imgPath;
 
-    @Transient //не храниться в БД, вычисляемое поле
+    @Transient // не хранится в БД, вычисляемое поле
     @Builder.Default
     private Integer count = 0;
 
@@ -57,4 +56,3 @@ public class Item {
         return Objects.hash(id);
     }
 }
-*/

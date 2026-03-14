@@ -1,19 +1,20 @@
-/*
-package ru.ugaforever.market.entity;
+package ru.ugaforever.reactive.market.entity;
 
-import jakarta.persistence.*;
+
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.ArrayList;
 import java.util.List;
 
-*/
+
 /**
  * Заказ
- *//*
+ */
 
-
-@Entity
 @Table(name = "orders")
 @Data
 @ToString(exclude = "items")
@@ -23,19 +24,26 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "total_sum")
+    @Column("total_sum")
     long totalSum;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Transient  // R2DBC не поддерживает @OneToMany, помечаем как временное поле
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
+
 
     public void addItem(OrderItem item) {
         items.add(item);
         item.setOrder(this);
     }
+
+    public void setItemsWithOrderId(List<OrderItem> items) {
+        this.items = items;
+        if (items != null) {
+            items.forEach(item -> item.setOrderId(this.id));
+        }
+    }
 }
-*/
+
