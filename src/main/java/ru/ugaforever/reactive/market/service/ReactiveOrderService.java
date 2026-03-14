@@ -8,8 +8,8 @@ import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.dto.ItemDTO;
-import ru.ugaforever.reactive.market.entity.Order;
-import ru.ugaforever.reactive.market.entity.OrderItem;
+import ru.ugaforever.reactive.market.model.Order;
+import ru.ugaforever.reactive.market.model.OrderItem;
 import ru.ugaforever.reactive.market.repository.ReactiveItemRepository;
 import ru.ugaforever.reactive.market.repository.ReactiveOrderRepository;
 
@@ -49,7 +49,7 @@ public class ReactiveOrderService {
                                                     OrderItem orderItem = OrderItem.builder()
                                                             .item(item)
                                                             .price(item.getPrice())
-                                                            .count(count)                    // Используем count из Mono
+                                                            .quantity(count)                    // Используем count из Mono
                                                             .build();
                                                     return orderItem;
                                                 })
@@ -60,7 +60,7 @@ public class ReactiveOrderService {
                     Order order = new Order();
 
                     long totalSum = orderItems.stream()
-                            .mapToLong(oi -> (long) (oi.getPrice() * oi.getCount()))
+                            .mapToLong(oi -> (long) (oi.getPrice() * oi.getQuantity()))
                             .sum();
 
                     order.setTotalSum(totalSum);

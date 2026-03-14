@@ -1,4 +1,4 @@
-package ru.ugaforever.reactive.market.entity;
+package ru.ugaforever.reactive.market.model;
 
 
 import lombok.*;
@@ -33,6 +33,7 @@ public class Order {
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
 
+    private OrderMetadata metadata;
 
     public void addItem(OrderItem item) {
         items.add(item);

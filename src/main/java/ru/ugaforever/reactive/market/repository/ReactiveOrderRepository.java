@@ -3,7 +3,7 @@ package ru.ugaforever.reactive.market.repository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
-import ru.ugaforever.reactive.market.entity.Order;
+import ru.ugaforever.reactive.market.model.Order;
 
 /**
  * R2DBC не поддерживает JOIN FETCH,
@@ -15,7 +15,6 @@ import ru.ugaforever.reactive.market.entity.Order;
 @Repository
 public interface ReactiveOrderRepository extends ReactiveCrudRepository<Order, Long> {
 
-    Mono<Order> findById(Long id);
 }
 
 

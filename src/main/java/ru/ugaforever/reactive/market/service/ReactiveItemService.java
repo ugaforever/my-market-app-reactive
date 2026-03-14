@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.dto.ItemDTO;
-import ru.ugaforever.reactive.market.entity.Item;
+import ru.ugaforever.reactive.market.model.Item;
 import ru.ugaforever.reactive.market.exception.EntityNotFoundException;
 import ru.ugaforever.reactive.market.mapper.ItemMapper;
 import ru.ugaforever.reactive.market.repository.ReactiveItemRepository;

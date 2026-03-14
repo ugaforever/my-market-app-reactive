@@ -1,44 +1,26 @@
-/*
-package ru.ugaforever.market.controller;
+package ru.ugaforever.reactive.market.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import ru.ugaforever.market.dto.ItemDTO;
-import ru.ugaforever.market.entity.Item;
-import ru.ugaforever.market.service.CartService;
-import ru.ugaforever.market.service.ItemService;
-import ru.ugaforever.market.util.ItemUtils;
+import org.springframework.web.server.WebSession;
+import reactor.core.publisher.Mono;
+import ru.ugaforever.reactive.market.service.ReactiveCartService;
+import ru.ugaforever.reactive.market.service.ReactiveItemService;
 
-import java.util.List;
 
-@Slf4j  // (log)
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class ItemController {
 
-    private final ItemService itemService;
-    private final CartService cartService;
+    private final ReactiveItemService itemService;
+    private final ReactiveCartService cartService;
 
-    */
-/**
-     * Главная страница проекта с витриной товаров, доступная по адресам / и /items*
-     * GET /?search=[search]&sort=[sort]&pageNumber=[pageNumber]&pageSize=[pageSize]
-     * GET /items?search=[search]&sort=[sort]&pageNumber=[pageNumber]&pageSize=[pageSize]
-     *
-     * @param search        опциональный параметр, [search] — строка для поиска по названию/описанию товара (по умолчанию нет поиска — выводить все товары)
-     * @param sort          опциональный параметр, [sort] — способ сортировки товаров: NO — без сортировки (значение по умолчанию), ALPHA — по названию, PRICE — по цене
-     * @param pageNumber    опциональный параметр, [pageNumber] — номер текущей страницы с товарами (по умолчанию первая страница — 1)
-     * @param pageSize      опциональный параметр, [pageSize] — число товаров на странице с товарами (по умолчанию первая страница — 5)
-     *//*
 
-    @GetMapping({"/items", "/"})
+    /*@GetMapping({"/items", "/"})
      public ModelAndView getItems(
             @RequestParam(required = false) String search,
             @RequestParam(required = false, defaultValue = "NO") String sort,
@@ -78,41 +60,26 @@ public class ItemController {
         modelAndView.addObject("sort", sort);
 
         return modelAndView;
-    }
-
-    */
-/**
-     * Страница с конкретным товаром, доступная по адресу /items/{id}
-     * @param id - товар
-     *//*
+    }*/
 
     @GetMapping("/items/{id}")
-    public ModelAndView getItemById(@PathVariable Long id) {
-        Item item = itemService.findById(id);
-
-        // Добавляем информацию о количестве в корзине
-        item.setCount(cartService.getCountInCart(item.getId()));
-
-        ModelAndView modelAndView = new ModelAndView("item");
-        modelAndView.addObject("item", item);
-
-        return modelAndView;
+    public Mono<String> getItemById(@PathVariable Long id,
+                                    WebSession session,
+                                    Model model) {
+        return itemService.findById(id)
+                .flatMap(item ->
+                        cartService.getCount(session, item.getId())
+                                .map(count -> {
+                                    item.setCount(count);
+                                    return item;
+                                })
+                )
+                .doOnNext(item -> model.addAttribute("item", item))
+                .thenReturn("item");  // имя шаблона
     }
 
-    */
-/**
-     * Уменьшение/увеличение количества товара в корзине со страницы товаров в корзине
-     * POST /items?id=[id]&search=[search]&sort=[sort]&pageNumber=[pageNumber]&pageSize=[pageSize]&action=[action]
-     *
-     * @param id            обязательный параметр, [id] — идентификатор товара
-     * @param action        обязательный параметр, объект действия с товаром, [action] — значение MINUS — уменьшить число товаров с id в корзине на один, PLUS — увеличить число товаров с id в корзине на один
-     * @param search        опциональный параметр, [search] — строка для поиска по названию/описанию товара (по умолчанию нет поиска — выводить все товары)
-     * @param sort          опциональный параметр, [sort] — способ сортировки товаров: NO — без сортировки (значение по умолчанию), ALPHA — по названию, PRICE — по цене
-     * @param pageNumber    опциональный параметр, [pageNumber] — номер текущей страницы с товарами (по умолчанию первая страница — 1)
-     * @param pageSize      опциональный параметр, [pageSize] — число товаров на странице с товарами (по умолчанию первая страница — 5)
-     *//*
 
-    @PostMapping("/items")
+/*    @PostMapping("/items")
     public String handleItemAction(
             @RequestParam Long id,
             @RequestParam String action,
@@ -122,9 +89,8 @@ public class ItemController {
             @RequestParam(required = false, defaultValue = "5") int pageSize) {
 
         //todo сделать через аспекты наконец-таки !!
-        */
-/*log.info("Received request: id='{}', action='{}', search='{}', sort='{}', pageNumber='{}', pageSize='{}'",
-                id, action, search, sort, pageNumber, pageSize);*//*
+        log.info("Received request: id='{}', action='{}', search='{}', sort='{}', pageNumber='{}', pageSize='{}'",
+                id, action, search, sort, pageNumber, pageSize);
 
 
         if (pageNumber < 1) {
@@ -143,18 +109,10 @@ public class ItemController {
                 + "&sort=" + sort
                 + "&pageNumber=" + pageNumber
                 + "&pageSize=" + pageSize;
-    }
+    }*/
 
-    */
-/**
-     * Уменьшение/увеличение количества товара в корзине со страницы товара*
-     * POST /items/{id}?action=[action]
-     *
-     * @param id        идентификатор товара
-     * @param action    обязательный параметр, объект действия с товаром, [action] — значение MINUS — уменьшить число товаров с id в корзине на один, PLUS — увеличить число товаров с id в корзине на один
-     *//*
 
-    @PostMapping("/items/{id}")
+/*    @PostMapping("/items/{id}")
     public ModelAndView handleItemActionById(
             @PathVariable Long id,
             @RequestParam String action) {
@@ -172,6 +130,6 @@ public class ItemController {
         modelAndView.addObject("item", item);
 
         return modelAndView;
-    }
+    }*/
 }
-*/
+

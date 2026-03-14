@@ -2,7 +2,7 @@ package ru.ugaforever.reactive.market.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.ugaforever.reactive.market.dto.ItemDTO;
-import ru.ugaforever.reactive.market.entity.Item;
+import ru.ugaforever.reactive.market.model.Item;
 
 @Component
 public class ItemMapper {
