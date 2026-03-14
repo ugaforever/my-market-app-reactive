@@ -2,13 +2,20 @@ package ru.ugaforever.reactive.market.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.result.view.Rendering;
 import org.springframework.web.server.WebSession;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.ugaforever.reactive.market.dto.ItemDTO;
 import ru.ugaforever.reactive.market.service.ReactiveCartService;
 import ru.ugaforever.reactive.market.service.ReactiveItemService;
+import ru.ugaforever.reactive.market.util.ItemUtils;
+
+import java.util.List;
 
 
 @Slf4j
@@ -19,13 +26,13 @@ public class ItemController {
     private final ReactiveItemService itemService;
     private final ReactiveCartService cartService;
 
-
-    /*@GetMapping({"/items", "/"})
-     public ModelAndView getItems(
+    @GetMapping({"/items", "/"})
+    public Mono<Rendering> getItems(
             @RequestParam(required = false) String search,
             @RequestParam(required = false, defaultValue = "NO") String sort,
             @RequestParam(required = false, defaultValue = "1") int pageNumber,
-            @RequestParam(required = false, defaultValue = "5") int pageSize) {
+            @RequestParam(required = false, defaultValue = "5") int pageSize,
+            WebSession session) {
 
         if (pageNumber < 1) {
             pageNumber = 1;
@@ -41,26 +48,46 @@ public class ItemController {
                 springSort
         );
 
-        // Получаем страницу товаров через сервис
-        Page<ItemDTO> itemsPage = itemService.findItemsWithFilters(
-                search, sortedPageable);
+        // Получаем страницу товаров через реактивный сервис
+        return itemService.findItemsWithFilters(search, sortedPageable)
+                .flatMap(itemsPage ->
+                        addCartCountsToItems(session, itemsPage.getContent())
+                                .map(itemsWithCartCount -> {
+                                    // Обновляем страницу с товарами, содержащими количество в корзине
+                                    Page<ItemDTO> updatedPage = new PageImpl<>(
+                                            itemsWithCartCount,
+                                            itemsPage.getPageable(),
+                                            itemsPage.getTotalElements()
+                                    );
 
-        // Разбиваем список товаров на ряды по 3 в ряд
-        List<List<ItemDTO>> itemsRows = ItemUtils.groupItemsForDisplay(itemsPage.getContent(), 3);
+                                    List<List<ItemDTO>> itemsRows = ItemUtils.groupItemsForDisplay(
+                                            itemsWithCartCount, 3);
 
-        // Добавляем информацию о количестве в корзине
-        itemsPage.getContent().forEach(item ->
-                item.setCount(cartService.getCountInCart(item.getId()))
-        );
+                                    // Создаем Rendering объект
+                                    return Rendering.view("items")
+                                            .modelAttribute("items", itemsRows)
+                                            .modelAttribute("paging", updatedPage)
+                                            .modelAttribute("search", search)
+                                            .modelAttribute("sort", sort)
+                                            .build();
+                                })
+                )
+                .switchIfEmpty(Mono.just(
+                        Rendering.view("items").build()
+                ));
+    }
 
-        ModelAndView modelAndView = new ModelAndView("items");
-        modelAndView.addObject("items", itemsRows);
-        modelAndView.addObject("paging", itemsPage);
-        modelAndView.addObject("search", search);
-        modelAndView.addObject("sort", sort);
-
-        return modelAndView;
-    }*/
+    private Mono<List<ItemDTO>> addCartCountsToItems(WebSession session, List<ItemDTO> items) {
+        return Flux.fromIterable(items)
+                .flatMap(item ->
+                        cartService.getCount(session, item.getId()) //getCount реактивный
+                                .map(count -> {
+                                    item.setCount(count);
+                                    return item;
+                                })
+                )
+                .collectList();
+    }
 
     @GetMapping("/items/{id}")
     public Mono<String> getItemById(@PathVariable Long id,
@@ -75,7 +102,7 @@ public class ItemController {
                                 })
                 )
                 .doOnNext(item -> model.addAttribute("item", item))
-                .thenReturn("item");  // имя шаблона
+                .thenReturn("item");
     }
 
 

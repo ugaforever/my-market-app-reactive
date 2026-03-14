@@ -1,8 +1,7 @@
-/*
-package ru.ugaforever.market.util;
+package ru.ugaforever.reactive.market.util;
 
 import org.springframework.data.domain.Sort;
-import ru.ugaforever.market.dto.ItemDTO;
+import ru.ugaforever.reactive.market.dto.ItemDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +35,6 @@ public final class ItemUtils {
         return rows;
     }
 
-    */
-/**
-     * Конвертация строки сортировки в Sort объект Spring Data
-     *//*
-
     public static Sort convertToSpringSort(String sortParam) {
         if (sortParam == null) {
             return Sort.unsorted();
@@ -55,4 +49,4 @@ public final class ItemUtils {
     }
 
 }
-*/
+
