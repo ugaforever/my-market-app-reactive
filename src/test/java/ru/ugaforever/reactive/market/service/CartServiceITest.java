@@ -21,7 +21,7 @@ class CartServiceITest {
     private CartService cartService;
 
     @Autowired
-    private ItemService itemService;
+    private ReactiveItemService itemService;
 
     @Test
     void testContextLoads() {

@@ -5,14 +5,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import ru.ugaforever.reactive.market.entity.Item;
-import ru.ugaforever.reactive.market.repository.ItemRepository;
+import ru.ugaforever.reactive.market.repository.ReactiveItemRepository;
 
 
 @Component
 @RequiredArgsConstructor
-public class DatabaseInitializer implements CommandLineRunner {
+public class ReactiveDatabaseInitializer implements CommandLineRunner {
 
-    private final ItemRepository itemRepository;
+    private final ReactiveItemRepository itemRepository;
 
     @Override
     public void run(String... args) {
@@ -28,22 +28,4 @@ public class DatabaseInitializer implements CommandLineRunner {
                 .collectList()
                 .subscribe();
     }
-
-
-
-/*    @Override
-    public void run(String... args) {
-        List<Item> items = new ArrayList<>();
-        for (int i = 1; i <= 20; i++) {
-            items.add(Item.builder()
-                    .title("Товар № " + i)
-                    .price((double)Math.round(i * 1000 / 3))
-                    .description("Описание товара № " + i)
-                    .imgPath(String.format("images/%d.jpg", i))
-                    .build());
-        }
-
-        itemRepository.saveAll(items);
-        System.out.println("Загружено товаров: " + itemRepository.count());
-    }*/
 }

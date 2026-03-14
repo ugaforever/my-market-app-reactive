@@ -40,14 +40,6 @@ public class OrderItem {
         this.orderId = order != null ? order.getId() : null;
     }
 
-/*    public void setItem(Item item) {
-        this.item = item;
-        this.itemId = item != null ? item.getId() : null;
-        if (item != null && this.title == null) {
-            this.title = item.getTitle(); // Копируем название на момент создания
-        }
-    }*/
-
     public Double getTotalPrice() {
         return price * count;
     }

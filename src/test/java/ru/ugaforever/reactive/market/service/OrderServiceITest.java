@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderServiceITest {
 
     @Autowired
-    private OrderService orderService;
+    private ReactiveOrderService orderService;
     @Autowired
-    private ItemService itemService;
+    private ReactiveItemService itemService;
     @Autowired
     private ItemMapper itemMapper;
     @Autowired
@@ -93,7 +93,7 @@ class OrderServiceITest {
         long newId = orderService.createOrder(items);
 
         // Act
-        List<Order> result = orderService.findAllWithItems();
+        List<Order> result = orderService.findAll();
 
         // Assert
         assertAll("Получение всех заказов",

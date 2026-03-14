@@ -1,5 +1,4 @@
-/*
-package ru.ugaforever.market.dto;
+package ru.ugaforever.reactive.market.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,16 +21,26 @@ public class ItemDTO {
     private Integer count = 0;
 
     //для шаблонов
-    public Long id() { return id; }
-    public String title() { return title; }
-    public String description() { return description; }
-    public Double price() { return price; }
+    public Long id() {
+        return id;
+    }
 
-    //public String imgPath() { return imgPath; }
-    */
-/*public Integer сount() {
+    public String title() {
+        return title;
+    }
+
+    public String description() {
+        return description;
+    }
+
+    public Double price() {
+        return price;
+    }
+    public String imgPath() {
+        return imgPath;
+    }
+
+/*    public Integer сount() {
         return count != null ? count : 0;
-    }*//*
-
+    }*/
 }
-*/

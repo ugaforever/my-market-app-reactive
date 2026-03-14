@@ -13,9 +13,8 @@ import ru.ugaforever.reactive.market.entity.Order;
  */
 
 @Repository
-public interface OrderRepository extends ReactiveCrudRepository<Order, Long> {
+public interface ReactiveOrderRepository extends ReactiveCrudRepository<Order, Long> {
 
-    // Получить заказ
     Mono<Order> findById(Long id);
 }
 

@@ -1,9 +1,8 @@
-/*
-package ru.ugaforever.market.mapper;
+package ru.ugaforever.reactive.market.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.ugaforever.market.dto.ItemDTO;
-import ru.ugaforever.market.entity.Item;
+import ru.ugaforever.reactive.market.dto.ItemDTO;
+import ru.ugaforever.reactive.market.entity.Item;
 
 @Component
 public class ItemMapper {
@@ -28,4 +27,3 @@ public class ItemMapper {
                 .build();
     }
 }
-*/

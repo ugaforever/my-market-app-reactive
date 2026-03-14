@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ItemServiceITest {
 
     @Autowired
-    private ItemService itemService;
+    private ReactiveItemService itemService;
 
     @Test
     void testFindItemsWithFilters() {
