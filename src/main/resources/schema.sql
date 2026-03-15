@@ -1,0 +1,28 @@
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS items;
+
+CREATE TABLE IF NOT EXISTS items (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    description VARCHAR(1000) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    img_path VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    total_sum BIGINT NOT NULL DEFAULT 0,
+    metadata VARCHAR(1000)
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    item_id BIGINT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+
+    CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    CONSTRAINT fk_order_items_item FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE RESTRICT
+);

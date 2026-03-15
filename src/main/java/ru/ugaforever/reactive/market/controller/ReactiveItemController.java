@@ -156,20 +156,21 @@ public class ReactiveItemController {
                 );
     }
 
+    //Добавить товар
     @PostMapping("/items/{id}/plus")
     public Mono<Rendering> plusItem(@PathVariable Long id, WebSession session) {
         return cartService.plusItem(session, id)
                 .thenReturn(Rendering.view("redirect:/items/" + id).build());
     }
 
-    // MINUS - убавить товар
+    //Убавить товар
     @PostMapping("/items/{id}/minus")
     public Mono<Rendering> minusItem(@PathVariable Long id, WebSession session) {
         return cartService.minusItem(session, id)
                 .thenReturn(Rendering.view("redirect:/items/" + id).build());
     }
 
-    // ADD - добавить в корзину (для кнопки CART)
+    //Добавить в корзину (для кнопки CART)
     @PostMapping("/items/{id}/add")
     public Mono<Rendering> addToCart(@PathVariable Long id, WebSession session) {
         return cartService.plusItem(session, id)

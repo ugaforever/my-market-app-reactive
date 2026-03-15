@@ -62,11 +62,6 @@ public class ReactiveItemService {
                 }));
     }
 
-    public Mono<ItemDTO> findDtoById(Long id) {
-        return findById(id)
-                .map(itemMapper::toDto);
-    }
-
     public Mono<Item> save(Item item) {
         return itemRepository.save(item);
     }
