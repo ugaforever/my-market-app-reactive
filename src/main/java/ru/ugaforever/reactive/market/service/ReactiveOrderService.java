@@ -44,12 +44,12 @@ public class ReactiveOrderService {
                         itemRepository.findById(itemDto.getId())
                                 .switchIfEmpty(Mono.error(new RuntimeException("Товар не найден: " + itemDto.getId())))
                                 .flatMap(item ->
-                                        cartService.getCount(session, item.getId())  // Это Mono<Integer>
-                                                .map(count -> {                          // Преобразуем count в OrderItem
+                                        cartService.getCount(session, item.getId())
+                                                .map(count -> {
                                                     OrderItem orderItem = OrderItem.builder()
                                                             .item(item)
                                                             .price(item.getPrice())
-                                                            .quantity(count)                    // Используем count из Mono
+                                                            .quantity(count)
                                                             .build();
                                                     return orderItem;
                                                 })

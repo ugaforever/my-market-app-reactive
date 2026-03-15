@@ -40,22 +40,19 @@ public class ReactiveItemController {
             pageNumber = 1;
         }
 
-        // Конвертируем строку сортировки в Sort объект Spring Data
         Sort springSort = ItemUtils.convertToSpringSort(sort);
 
-        // Создаем новый Pageable с нашей сортировкой
         Pageable sortedPageable = PageRequest.of(
                 pageNumber - 1,
                 pageSize,
                 springSort
         );
 
-        // Получаем страницу товаров через реактивный сервис
         return itemService.findItemsWithFilters(search, sortedPageable)
                 .flatMap(itemsPage ->
                         addCartCountsToItems(session, itemsPage.getContent())
                                 .map(itemsWithCartCount -> {
-                                    // Обновляем страницу с товарами, содержащими количество в корзине
+
                                     Page<ItemDTO> updatedPage = new PageImpl<>(
                                             itemsWithCartCount,
                                             itemsPage.getPageable(),
@@ -65,7 +62,6 @@ public class ReactiveItemController {
                                     List<List<ItemDTO>> itemsRows = ItemUtils.groupItemsForDisplay(
                                             itemsWithCartCount, 3);
 
-                                    // Создаем Rendering объект
                                     return Rendering.view("items")
                                             .modelAttribute("items", itemsRows)
                                             .modelAttribute("paging", updatedPage)
@@ -121,8 +117,8 @@ public class ReactiveItemController {
             WebSession session) {
 
         //todo сделать через аспекты наконец-таки !!
-        log.info("Received request: id='{}', action='{}', search='{}', sort='{}', pageNumber='{}', pageSize='{}'",
-                id, action, search, sort, pageNumber, pageSize);
+        /*log.info("Received request: id='{}', action='{}', search='{}', sort='{}', pageNumber='{}', pageSize='{}'",
+                id, action, search, sort, pageNumber, pageSize);*/
 
         if (pageNumber < 1) {
             pageNumber = 1;
@@ -197,8 +193,5 @@ public class ReactiveItemController {
 
         return Rendering.redirectTo(redirectUrl).build();
     }
-
-
-
 }
 

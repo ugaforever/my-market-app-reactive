@@ -39,12 +39,5 @@ public class Order {
         items.add(item);
         item.setOrder(this);
     }
-
-    public void setItemsWithOrderId(List<OrderItem> items) {
-        this.items = items;
-        if (items != null) {
-            items.forEach(item -> item.setOrderId(this.id));
-        }
-    }
 }
 

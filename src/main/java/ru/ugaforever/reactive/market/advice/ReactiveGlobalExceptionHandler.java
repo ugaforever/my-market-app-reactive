@@ -9,13 +9,10 @@ import org.springframework.web.reactive.result.view.Rendering;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.exception.EntityNotFoundException;
-
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 
 @ControllerAdvice
 public class ReactiveGlobalExceptionHandler {
