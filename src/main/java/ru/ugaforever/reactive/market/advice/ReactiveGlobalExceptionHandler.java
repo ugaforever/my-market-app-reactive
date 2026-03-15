@@ -21,7 +21,6 @@ public class ReactiveGlobalExceptionHandler {
     private static final String ERROR_VIEW_400 = "error/400";
     private static final String ERROR_VIEW_500 = "error/500";
 
-
     // ==================== 404 ОШИБКИ ====================
 
     @ExceptionHandler(EntityNotFoundException.class)
