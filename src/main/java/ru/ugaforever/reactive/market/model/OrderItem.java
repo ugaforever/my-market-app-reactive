@@ -1,4 +1,4 @@
-package ru.ugaforever.reactive.market.entity;
+package ru.ugaforever.reactive.market.model;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -32,8 +32,8 @@ public class OrderItem {
     @Column("price")
     private Double price;  // Цена данного товара на момент заказа
 
-    @Column("count")
-    private Integer count; // Количество данного товара в заказе
+    @Column("quantity")
+    private Integer quantity; // Количество данного товара в заказе
 
     public void setOrder(Order order) {
         this.order = order;
@@ -41,7 +41,7 @@ public class OrderItem {
     }
 
     public Double getTotalPrice() {
-        return price * count;
+        return price * quantity;
     }
 }
 

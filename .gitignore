@@ -37,8 +37,6 @@ target/maven-status/
 *.h2.db
 
 ### Maven ###
-target/
-**/target/
 *.jar
 *.war
 *.ear

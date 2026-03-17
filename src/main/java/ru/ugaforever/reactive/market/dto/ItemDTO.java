@@ -36,11 +36,9 @@ public class ItemDTO {
     public Double price() {
         return price;
     }
+
     public String imgPath() {
         return imgPath;
     }
 
-/*    public Integer сount() {
-        return count != null ? count : 0;
-    }*/
 }

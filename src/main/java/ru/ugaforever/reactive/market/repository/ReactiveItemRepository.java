@@ -5,9 +5,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.ugaforever.reactive.market.entity.Item;
-
-import java.util.Optional;
+import ru.ugaforever.reactive.market.model.Item;
 
 @Repository
 public interface ReactiveItemRepository extends ReactiveCrudRepository<Item, Long> {

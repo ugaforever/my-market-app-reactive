@@ -8,8 +8,8 @@ import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.dto.ItemDTO;
-import ru.ugaforever.reactive.market.entity.Order;
-import ru.ugaforever.reactive.market.entity.OrderItem;
+import ru.ugaforever.reactive.market.model.Order;
+import ru.ugaforever.reactive.market.model.OrderItem;
 import ru.ugaforever.reactive.market.repository.ReactiveItemRepository;
 import ru.ugaforever.reactive.market.repository.ReactiveOrderRepository;
 
@@ -44,12 +44,12 @@ public class ReactiveOrderService {
                         itemRepository.findById(itemDto.getId())
                                 .switchIfEmpty(Mono.error(new RuntimeException("Товар не найден: " + itemDto.getId())))
                                 .flatMap(item ->
-                                        cartService.getCount(session, item.getId())  // Это Mono<Integer>
-                                                .map(count -> {                          // Преобразуем count в OrderItem
+                                        cartService.getCount(session, item.getId())
+                                                .map(count -> {
                                                     OrderItem orderItem = OrderItem.builder()
                                                             .item(item)
                                                             .price(item.getPrice())
-                                                            .count(count)                    // Используем count из Mono
+                                                            .quantity(count)
                                                             .build();
                                                     return orderItem;
                                                 })
@@ -60,7 +60,7 @@ public class ReactiveOrderService {
                     Order order = new Order();
 
                     long totalSum = orderItems.stream()
-                            .mapToLong(oi -> (long) (oi.getPrice() * oi.getCount()))
+                            .mapToLong(oi -> (long) (oi.getPrice() * oi.getQuantity()))
                             .sum();
 
                     order.setTotalSum(totalSum);

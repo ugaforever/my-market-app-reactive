@@ -1,6 +1,5 @@
-package ru.ugaforever.reactive.market.entity;
+package ru.ugaforever.reactive.market.model;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
