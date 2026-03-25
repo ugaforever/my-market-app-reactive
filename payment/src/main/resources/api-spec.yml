@@ -1,0 +1,235 @@
+openapi: 3.0.3
+info:
+  title: RESTful Payment Service API
+  description: Реактивный сервис платежей
+  version: 1.0.0
+  contact:
+    email: ugaforever@yandex.ru
+
+servers:
+  - url: http://localhost:9091/v1
+    description: Local development server
+
+tags:
+  - name: Balance
+    description: Операции с балансом счёта
+  - name: Payments
+    description: Обработка платежей
+
+paths:
+  /balance/{accountId}:
+    get:
+      tags:
+        - Balance
+      summary: Получить текущий баланс счёта
+      description: Возвращает текущий баланс для указанного аккаунта
+      operationId: getBalance
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: Идентификатор счёта пользователя
+          schema:
+            type: string
+            example: "12345678"
+      responses:
+        '200':
+          description: Успешный ответ с балансом
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+              examples:
+                balanceExample:
+                  value:
+                    accountId: "12345678"
+                    balance: 3000.50
+        '400':
+          description: Неверный формат accountId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Счёт не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /payments:
+    post:
+      tags:
+        - Payments
+      summary: Оформить платёж (списание средств)
+      description: Выполняет списание указанной суммы со счёта пользователя
+      operationId: processPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+            examples:
+              paymentExample:
+                value:
+                  accountId: "12345678"
+                  amount: 299.99
+                  orderId: "12345678"
+
+      responses:
+        '200':
+          description: Платёж успешно выполнен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+              examples:
+                successExample:
+                  value:
+                    transactionId: "abcbd12345"
+                    accountId: "12345678"
+                    newBalance: 1200.51
+                    status: "SUCCESS"
+        '400':
+          description: Неверные параметры запроса (например, отрицательная сумма)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Счёт не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Недостаточно средств для списания
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                insufficientFunds:
+                  value:
+                    errorCode: "INSUFFICIENT_FUNDS"
+                    message: "Insufficient balance for this payment. Current balance: 1500.50, requested: 2000.00"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    BalanceResponse:
+      type: object
+      required:
+        - accountId
+        - balance
+      properties:
+        accountId:
+          type: string
+          description: Идентификатор счёта
+          example: "12345678"
+        balance:
+          type: number
+          format: double
+          description: Текущий баланс не может быть отрицательным
+          example: 1500.50
+
+    PaymentRequest:
+      type: object
+      required:
+        - accountId
+        - amount
+      properties:
+        accountId:
+          type: string
+          description: Идентификатор счёта для списания
+          example: "12345678"
+        amount:
+          type: number
+          format: double
+          description: Сумма к списанию (должна быть положительной)
+          example: 299.99
+          exclusiveMinimum: 0
+        orderId:
+          type: string
+          description: Идентификатор заказа (опционально, для логирования)
+          example: "12345678"
+
+    PaymentResponse:
+      type: object
+      required:
+        - transactionId
+        - accountId
+        - newBalance
+        - status
+      properties:
+        transactionId:
+          type: string
+          description: Уникальный идентификатор транзакции
+          example: "abcd1234"
+        accountId:
+          type: string
+          description: Идентификатор счёта
+          example: "12345678"
+        newBalance:
+          type: number
+          format: double
+          description: Новый баланс после списания
+          example: 1200.51
+        status:
+          type: string
+          enum:
+            - SUCCESS
+          description: Статус платежа (всегда SUCCESS при успешном ответе)
+
+    ErrorResponse:
+      type: object
+      required:
+        - errorCode
+        - message
+      properties:
+        errorCode:
+          type: string
+          description: Код ошибки для программной обработки
+          enum:
+            - INVALID_REQUEST
+            - ACCOUNT_NOT_FOUND
+            - INSUFFICIENT_FUNDS
+            - INTERNAL_ERROR
+          example: "INSUFFICIENT_FUNDS"
+        message:
+          type: string
+          example: "Недостаточный баланс для платежа"
+
+  # Примеры ответов для документации
+  examples:
+    BalanceSuccess:
+      summary: Успешное получение баланса
+      value:
+        accountId: "12345678"
+        balance: 1500.50
+
+    PaymentSuccess:
+      summary: Успешный платёж
+      value:
+        transactionId: "abcd1234"
+        accountId: "12345678"
+        newBalance: 1200.51
+        status: "SUCCESS"
+
+    InsufficientFundsError:
+      summary: Ошибка недостатка средств
+      value:
+        errorCode: "INSUFFICIENT_FUNDS"
+        message: "Недостаточный баланс для платежа"

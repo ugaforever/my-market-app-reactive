@@ -25,6 +25,11 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+            <version>2.8.13</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-r2dbc</artifactId>
         </dependency>
@@ -63,4 +68,94 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.12.0</version>
+                <executions>
+                    <!-- Генерация кода СЕРВЕРА -->
+                    <execution>
+                        <id>generate-server</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>spring</generatorName>
+                            <inputSpec>${project.basedir}/src/main/resources/api-spec.yml</inputSpec>
+                            <modelPackage>ru.ugaforever.reactive.market.payment.server.domain</modelPackage>
+                            <invokerPackage>ru.ugaforever.reactive.market.payment.server</invokerPackage>
+                            <apiPackage>ru.ugaforever.reactive.market.payment.server.api</apiPackage>
+                            <configOptions>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <requestMappingMode>controller</requestMappingMode>
+                                <interfaceOnly>false</interfaceOnly>
+                                <library>spring-boot</library>
+                                <reactive>true</reactive>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useJakartaEe>true</useJakartaEe>
+                                <useTags>true</useTags>
+                                <dateLibrary>java8</dateLibrary>
+                                <openApiNullable>false</openApiNullable>
+                                <serializableModel>true</serializableModel>
+                                <returnSuccessCode>true</returnSuccessCode>
+                                <skipBuild>true</skipBuild>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+
+                    <!-- Генерация кода КЛИЕНТА -->
+                    <execution>
+                        <id>generate-client</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>java</generatorName>
+                            <inputSpec>${project.basedir}/src/main/resources/api-spec.yml</inputSpec>
+                            <modelPackage>ru.ugaforever.reactive.market.payment.client.model</modelPackage>
+                            <apiPackage>ru.ugaforever.reactive.market.payment.client.api</apiPackage>
+                            <invokerPackage>ru.ugaforever.reactive.market.payment.client.invoker</invokerPackage>
+                            <configOptions>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <library>webclient</library>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useJakartaEe>true</useJakartaEe>
+                                <dateLibrary>java8</dateLibrary>
+                                <openApiNullable>false</openApiNullable>
+                                <serializableModel>true</serializableModel>
+                                <generateBuilders>true</generateBuilders>
+                                <skipBuild>true</skipBuild>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Добавление сгенерированных исходников в путь сборки -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>add-server-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/server/src/main/java</source>
+                                <source>${project.build.directory}/generated-sources/client/src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
