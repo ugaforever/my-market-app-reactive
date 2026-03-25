@@ -1,6 +1,7 @@
 package ru.ugaforever.reactive.market.payment.server.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -8,6 +9,7 @@ import ru.ugaforever.reactive.market.payment.server.domain.BalanceResponse;
 import ru.ugaforever.reactive.market.payment.server.service.BalanceService;
 
 @RestController
+@RequestMapping("/api/v1")
 public class BalanceController implements BalanceApi {
 
     private final BalanceService balanceService;

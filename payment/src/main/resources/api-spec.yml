@@ -1,12 +1,30 @@
 openapi: 3.0.2
 info:
   title: Payment Service API
+  description: Реактивный сервис для управления платежами
   version: 1.0.0
+  contact:
+    email: foreveruga@yandex.ru
+servers:
+  - url: http://localhost:9091/api/v1
+    description: Local server
+  - url: http://localhost:9091/swagger-ui/index.html
+    description: Swagger UI
+  - url: http://localhost:9091/v3/api-docs
+    description: OpenAPI JSON
+
+tags:
+  - name: Balance
+    description: Операции с балансом
+  - name: Payments
+    description: Операции с платежами
+
 paths:
   /balance/{accountId}:
     get:
       tags:
         - Balance
+      summary: Получить баланс счета
       operationId: getBalance
       parameters:
         - name: accountId

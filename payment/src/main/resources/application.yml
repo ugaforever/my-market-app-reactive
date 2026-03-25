@@ -1,8 +1,6 @@
 spring:
   application:
     name: payment-service
-  webflux:
-    base-path: /api/v1
 
   redis:
     host: localhost
@@ -10,3 +8,13 @@ spring:
 
 server:
   port: 9091
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: method
+    tagsSorter: alpha
