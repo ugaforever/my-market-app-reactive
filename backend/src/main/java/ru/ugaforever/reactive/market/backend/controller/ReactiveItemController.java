@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReactiveItemController {
 
-    private final ReactiveItemCacheService itemService;
+    private final ReactiveItemCacheService itemCacheService;
     private final ReactiveCartService cartService;
 
     //Главная страница проекта с витриной товаров
@@ -48,7 +48,7 @@ public class ReactiveItemController {
                 springSort
         );
 
-        return itemService.findItemsWithFilters(search, sortedPageable)
+        return itemCacheService.findItemsWithFilters(search, sortedPageable)
                 .flatMap(itemsPage ->
                         addCartCountsToItems(session, itemsPage.getContent())
                                 .map(itemsWithCartCount -> {
@@ -92,7 +92,7 @@ public class ReactiveItemController {
     public Mono<String> getItemById(@PathVariable Long id,
                                     WebSession session,
                                     Model model) {
-        return itemService.findById(id)
+        return itemCacheService.findById(id)
                 .flatMap(item ->
                         cartService.getCount(session, item.getId())
                                 .map(count -> {
@@ -138,7 +138,7 @@ public class ReactiveItemController {
         System.out.println("=== DEBUG: id=" + id + ", action=" + action);
         log.info("Received request: id='{}', action='{}'", id, action);
 
-        return itemService.findById(id)
+        return itemCacheService.findById(id)
                 .flatMap(item ->
                         executeCartAction(session, action, id)
                                 .map(cart -> {
