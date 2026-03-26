@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.backend.dto.ItemDTO;
 import ru.ugaforever.reactive.market.backend.model.ReactiveCart;
 import ru.ugaforever.reactive.market.backend.service.ReactiveCartService;
-import ru.ugaforever.reactive.market.backend.service.ReactiveItemService;
+import ru.ugaforever.reactive.market.backend.service.ReactiveItemCacheService;
 import ru.ugaforever.reactive.market.backend.util.ItemUtils;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReactiveItemController {
 
-    private final ReactiveItemService itemService;
+    private final ReactiveItemCacheService itemService;
     private final ReactiveCartService cartService;
 
     //Главная страница проекта с витриной товаров
