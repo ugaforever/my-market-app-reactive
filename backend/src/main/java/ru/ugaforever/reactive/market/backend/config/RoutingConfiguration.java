@@ -9,7 +9,7 @@ import ru.ugaforever.reactive.market.backend.handler.OrderHandler;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
-public class RoutingConfig {
+public class RoutingConfiguration {
     @Bean
     public RouterFunction<ServerResponse> orderRoutes(OrderHandler handler) {
         return route()

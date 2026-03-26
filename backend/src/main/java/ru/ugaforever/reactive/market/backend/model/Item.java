@@ -1,3 +1,4 @@
+
 package ru.ugaforever.reactive.market.backend.model;
 
 import org.springframework.data.annotation.Id;
