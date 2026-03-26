@@ -3,6 +3,7 @@ package ru.ugaforever.reactive.market.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,10 @@ public class ReactiveItemCacheService {
 
     private final ReactiveItemService itemCacheService;
 
-    @Cacheable(value = "items", key = "'filter'")
+    @Cacheable(
+            value = "items",
+            key = "#search + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort"
+    )
     public Mono<Page<ItemDTO>> findItemsWithFilters(String search, Pageable pageable) {
         if (StringUtils.hasText(search)) {
             return itemCacheService.findItemsBySearch(search, pageable);
@@ -28,7 +32,10 @@ public class ReactiveItemCacheService {
         }
     }
 
-    @Cacheable(value = "item", key = "#id")
+    @Cacheable(
+            value = "item",
+            key = "#id"
+    )
     public Mono<ItemDTO> findById(Long id) {
 
         //если нет в кэше, то пойдет в БД!!
