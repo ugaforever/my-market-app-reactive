@@ -10,6 +10,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.backend.exception.EntityNotFoundException;
+import ru.ugaforever.reactive.market.backend.exception.PaymentServiceException;
+
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -91,7 +93,7 @@ public class ReactiveGlobalExceptionHandler {
     }
 
     // ==================== 402 ОШИБКИ ====================
-    @ExceptionHandler(ResponseStatusException.class)
+    @ExceptionHandler({ResponseStatusException.class, PaymentServiceException.class})
     public Mono<Rendering> handlePaymentRequired(ResponseStatusException ex, ServerWebExchange exchange) {
 
         return Mono.just(Rendering.view(ERROR_VIEW_402)

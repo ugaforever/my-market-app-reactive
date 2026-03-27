@@ -48,6 +48,26 @@
             <artifactId>reactor-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -100,6 +120,8 @@
                             <modelPackage>ru.ugaforever.reactive.market.payment.client.model</modelPackage>
                             <apiPackage>ru.ugaforever.reactive.market.payment.client.api</apiPackage>
                             <skip>${openapi.generator.skip}</skip>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
                             <configOptions>
                                 <library>webclient</library>
                                 <useSpringBoot3>true</useSpringBoot3>
@@ -110,6 +132,8 @@
                                 <serializableModel>true</serializableModel>
                                 <generateSupportingFiles>false</generateSupportingFiles>
                                 <generateTests>false</generateTests>
+                                <generateApiTests>false</generateApiTests>
+                                <generateModelTests>false</generateModelTests>
                                 <generateBuilders>true</generateBuilders>
                                 <useBeanValidation>true</useBeanValidation>
                             </configOptions>
