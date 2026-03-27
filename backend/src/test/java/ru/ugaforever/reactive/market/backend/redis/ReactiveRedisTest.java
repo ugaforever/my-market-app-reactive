@@ -15,7 +15,6 @@ import ru.ugaforever.reactive.market.backend.mapper.ItemMapper;
 import ru.ugaforever.reactive.market.backend.model.Item;
 import ru.ugaforever.reactive.market.backend.repository.ReactiveItemRepository;
 import ru.ugaforever.reactive.market.backend.service.ReactiveItemCacheService;
-import ru.ugaforever.reactive.market.backend.service.ReactiveItemService;
 
 import static org.mockito.Mockito.*;
 

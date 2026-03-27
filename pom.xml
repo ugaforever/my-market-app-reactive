@@ -20,6 +20,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 		<spring-boot.version>3.5.10</spring-boot.version>
+		<jackson.version>2.18.6</jackson.version>
 	</properties>
 
 	<modules>
@@ -30,6 +31,15 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!--Spring BOM (закрываю уязвимости 2026 года)-->
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>${jackson.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
@@ -37,6 +47,7 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
