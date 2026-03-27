@@ -1,6 +1,7 @@
 package ru.ugaforever.reactive.market.payment.server.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -19,7 +20,9 @@ public class BalanceController implements BalanceApi {
     }
 
     @Override
-    public Mono<ResponseEntity<BalanceResponse>> getBalance(String accountId, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<BalanceResponse>> getBalance(
+            @PathVariable("accountId") String accountId,
+            ServerWebExchange exchange) {
         return balanceService.getBalance(accountId)
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));

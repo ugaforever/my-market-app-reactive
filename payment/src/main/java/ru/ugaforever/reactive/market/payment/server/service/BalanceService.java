@@ -12,12 +12,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BalanceService {
     private final Map<String, BigDecimal> balances = new ConcurrentHashMap<>();
 
-    public BalanceService() {
-        balances.put("user123", new BigDecimal(1000.0));
-        balances.put("user456", new BigDecimal(50.0));
-    }
-
     public Mono<BalanceResponse> getBalance(String accountId) {
+
+        // в рамках учебного проекта
+        // пользователь генерируется на backend для каждой новой WebSession
+        // пополняем по умолчанию
+        balances.computeIfAbsent(accountId, key -> new BigDecimal(5000));
+
         BigDecimal balance = balances.get(accountId);
         if (balance == null) {
             return Mono.empty();

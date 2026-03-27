@@ -1,4 +1,3 @@
-/*
 package ru.ugaforever.reactive.market.backend.advice;
 
 import org.springframework.dao.DataAccessException;
@@ -7,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.reactive.result.view.Rendering;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.backend.exception.EntityNotFoundException;
@@ -21,6 +21,7 @@ public class ReactiveGlobalExceptionHandler {
     private static final String ERROR_VIEW_404 = "error/404";
     private static final String ERROR_VIEW_400 = "error/400";
     private static final String ERROR_VIEW_500 = "error/500";
+    private static final String ERROR_VIEW_402 = "error/402";
 
     // ==================== 404 ОШИБКИ ====================
 
@@ -89,6 +90,20 @@ public class ReactiveGlobalExceptionHandler {
                 .build());
     }
 
+    // ==================== 402 ОШИБКИ ====================
+    @ExceptionHandler(ResponseStatusException.class)
+    public Mono<Rendering> handlePaymentRequired(ResponseStatusException ex, ServerWebExchange exchange) {
+
+        return Mono.just(Rendering.view(ERROR_VIEW_402)
+                .modelAttribute("error", "Недостаточно средств")
+                .modelAttribute("message", ex.getReason())
+                .modelAttribute("path", exchange.getRequest().getURI().getPath())
+                .modelAttribute("timestamp", LocalDateTime.now())
+                .modelAttribute("status", HttpStatus.PAYMENT_REQUIRED.value())
+                .status(HttpStatus.PAYMENT_REQUIRED)
+                .build());
+    }
+
     // ==================== ОБЩИЙ ОБРАБОТЧИК (все остальные ошибки) ====================
 
     @ExceptionHandler(Exception.class)
@@ -105,4 +120,3 @@ public class ReactiveGlobalExceptionHandler {
                 .build());
     }
 }
-*/

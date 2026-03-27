@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>402 - Недостаточно средств</title>
+    <link th:href="@{/css/error.css}" rel="stylesheet">
+</head>
+<body>
+<div class="error-container">
+    <h1 th:text="${error}">402 - Недостаточно средств</h1>
+    <a href="/" class="btn">Вернуться на главную</a>
+</div>
+</body>
+</html>

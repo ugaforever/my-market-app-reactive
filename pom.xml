@@ -17,16 +17,23 @@
 		<java.version>21</java.version>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-		<spring-boot-maven-plugin.version>3.5.10</spring-boot-maven-plugin.version>
+		<spring-boot.version>3.5.10</spring-boot.version>
 	</properties>
+
+	<modules>
+		<module>backend</module>
+		<module>payment-api</module>
+		<module>payment</module>
+	</modules>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
-				<version>3.5.10</version>
+				<version>${spring-boot.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -38,15 +45,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<parameters>true</parameters>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
+					<parameters>true</parameters>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
 					<release>${java.version}</release>
@@ -58,24 +59,7 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
-
-	<modules>
-		<module>backend</module>
-		<module>payment</module>
-	</modules>
 
 </project>
