@@ -32,14 +32,7 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- Netty BOM (закрываю уязвимости 2026 года)-->
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-bom</artifactId>
-				<version>${netty.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+
 			<!--Spring BOM (закрываю уязвимости 2026 года)-->
 			<dependency>
 				<groupId>com.fasterxml.jackson</groupId>
@@ -53,6 +46,15 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
 				<version>${spring-boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Netty BOM (закрываю уязвимости 2026 года)-->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-bom</artifactId>
+				<version>${netty.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
