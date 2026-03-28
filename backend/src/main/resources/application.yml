@@ -1,0 +1,45 @@
+server:
+  port: ${SERVER_PORT:9090}
+
+spring:
+  application:
+    name: backend
+
+  redis:
+    host: ${SPRING_DATA_REDIS_HOST:localhost}
+    port: ${SPRING_DATA_REDIS_PORT:6379}
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 10m
+      cache-null-values: false
+
+  r2dbc:
+    url: r2dbc:h2:mem:///marketdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  sql:
+    init:
+      mode: always
+      platform: h2
+
+payment:
+  service:
+    url: ${PAYMENT_SERVICE_URL:http://localhost:9091}
+    connect-timeout: 5000
+    read-timeout: 5000
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    ru.ugaforever.my_market_app: DEBUG
