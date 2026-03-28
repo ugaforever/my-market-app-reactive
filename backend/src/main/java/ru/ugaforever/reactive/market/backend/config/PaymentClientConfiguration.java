@@ -1,7 +1,6 @@
 package ru.ugaforever.reactive.market.backend.config;
 
 import io.netty.channel.ChannelOption;
-import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
