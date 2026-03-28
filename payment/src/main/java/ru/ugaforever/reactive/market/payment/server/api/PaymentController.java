@@ -1,6 +1,7 @@
 package ru.ugaforever.reactive.market.payment.server.api;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,13 +29,20 @@ public class PaymentController implements PaymentsApi {
 
         return paymentRequest
                 .flatMap(request -> balanceService.deduct(request.getAccountId(), request.getAmount())
-                        .map(balance -> new PaymentResponse()
-                                .transactionId(UUID.randomUUID().toString())
-                                .newBalance(balance.getBalance())
-                                .status("SUCCESS"))
-                        .map(ResponseEntity::ok)
-                        .onErrorResume(IllegalArgumentException.class, e ->
-                                Mono.just(ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build()))
-                );
+                        .map(balance -> {
+                            PaymentResponse response = new PaymentResponse()
+                                    .transactionId(UUID.randomUUID().toString())
+                                    .newBalance(balance.getBalance())
+                                    .status("SUCCESS");
+
+                                    return ResponseEntity.ok()
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .body(response);
+                        }))
+                .onErrorResume(IllegalArgumentException.class, e ->
+                        Mono.just(ResponseEntity
+                                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(null)));
     }
 }

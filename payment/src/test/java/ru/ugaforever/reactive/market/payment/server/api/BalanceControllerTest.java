@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(BalanceController.class)
-class BalanceControllerITest {
+class BalanceControllerTest {
 
     @Autowired
     private WebTestClient webTestClient;
