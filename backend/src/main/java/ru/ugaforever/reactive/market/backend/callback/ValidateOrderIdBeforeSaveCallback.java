@@ -15,7 +15,8 @@ public class ValidateOrderIdBeforeSaveCallback implements BeforeSaveCallback<Ord
             return Mono.error(new IllegalArgumentException("Сумма заказа не может быть отрицательной"));
         }
 
-        if (entity.getItems() == null || entity.getItems().isEmpty()) {
+        if (entity
+                .getItems() == null || entity.getItems().isEmpty()) {
             return Mono.error(new IllegalArgumentException("Заказ должен содержать хотя бы один товар"));
         }
 

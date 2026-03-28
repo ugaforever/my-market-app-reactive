@@ -1,13 +1,13 @@
 server:
-  port: 9090
+  port: ${SERVER_PORT:9090}
 
 spring:
   application:
     name: backend
 
   redis:
-    host: localhost
-    port: 6379
+    host: ${SPRING_DATA_REDIS_HOST:localhost}
+    port: ${SPRING_DATA_REDIS_PORT:6379}
     lettuce:
       pool:
         max-active: 8
@@ -32,6 +32,12 @@ spring:
     init:
       mode: always
       platform: h2
+
+payment:
+  service:
+    url: ${PAYMENT_SERVICE_URL:http://localhost:9091}
+    connect-timeout: 5000
+    read-timeout: 5000
 
 logging:
   level:

@@ -3,11 +3,12 @@ spring:
     name: payment
 
   redis:
-    host: localhost
-    port: 6379
+    host: ${SPRING_DATA_REDIS_HOST:localhost}
+    port: ${SPRING_DATA_REDIS_PORT:6379}
 
 server:
-  port: 9091
+  port: ${SERVER_PORT:9091}
+  address: ${SERVER_ADDRESS:0.0.0.0}
 
 springdoc:
   api-docs:
