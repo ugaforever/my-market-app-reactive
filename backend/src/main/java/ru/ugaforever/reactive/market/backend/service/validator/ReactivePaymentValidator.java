@@ -1,4 +1,4 @@
-package ru.ugaforever.reactive.market.backend.service;
+package ru.ugaforever.reactive.market.backend.service.validator;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.payment.client.model.PaymentResponse;
 
 @Component
-public class PaymentValidator {
+public class ReactivePaymentValidator {
     public Mono<PaymentResponse> validate(PaymentResponse paymentResponse) {
         if (!"SUCCESS".equals(paymentResponse.getStatus())) {
             return Mono.error(new ResponseStatusException(

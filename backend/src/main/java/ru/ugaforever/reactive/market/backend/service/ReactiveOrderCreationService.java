@@ -12,6 +12,8 @@ import ru.ugaforever.reactive.market.backend.model.Order;
 import ru.ugaforever.reactive.market.backend.model.OrderItem;
 import ru.ugaforever.reactive.market.backend.repository.ReactiveItemRepository;
 import ru.ugaforever.reactive.market.backend.repository.ReactiveOrderRepository;
+import ru.ugaforever.reactive.market.backend.service.validator.ReactiveBalanceValidator;
+import ru.ugaforever.reactive.market.backend.service.validator.ReactivePaymentValidator;
 import ru.ugaforever.reactive.market.payment.client.model.PaymentRequest;
 
 import java.math.BigDecimal;
@@ -19,28 +21,18 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReactiveOrderService {
+public class ReactiveOrderCreationService {
 
     private final ReactiveOrderRepository orderRepository;
     private final ReactiveItemRepository itemRepository;
     private final ReactiveCartService cartService;
     private final ReactivePaymentService paymentService;
-    private final AccountIdGenerator accountIdGenerator;
-    private final BalanceValidator balanceValidator;
-    private final PaymentValidator paymentValidator;
+    private final AccountIdGenerationService accountIdGenerator;
+    private final ReactiveBalanceValidator balanceValidator;
+    private final ReactivePaymentValidator paymentValidator;
+    private final ReactiveBalanceService balanceService;
 
-    public Mono<Order> findById(Long id) {
-        return orderRepository.findById(id)
-                .switchIfEmpty(Mono.error(
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Заказ с ID " + id + " не найден")
-                ));
-    }
-
-    public Flux<Order> findAll() {
-        return orderRepository.findAll();
-    }
-
-    public Mono<Long> createOrder(WebSession session, List<ItemDTO> items) {
+    public Mono<Long> create(WebSession session, List<ItemDTO> items) {
         if (items == null || items.isEmpty()) {
             return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Список товаров пуст"));
         }
@@ -75,7 +67,7 @@ public class ReactiveOrderService {
                             .amount(BigDecimal.valueOf(totalSum))
                             .build();
 
-                    return paymentService.getBalance(finalAccountId)
+                    return balanceService.getBalance(finalAccountId)
                             .flatMap(balance -> balanceValidator.validate(balance, totalSum))
                             .flatMap(balance -> paymentService.processPayment(paymentRequest))
                             .flatMap(responce -> paymentValidator.validate(responce))
@@ -91,7 +83,4 @@ public class ReactiveOrderService {
         return orderRepository.save(order)
                 .map(Order::getId);
     }
-
-
 }
-

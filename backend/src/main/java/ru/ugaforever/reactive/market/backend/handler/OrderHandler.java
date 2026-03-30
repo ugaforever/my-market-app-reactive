@@ -6,7 +6,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.backend.service.ReactiveCartService;
-import ru.ugaforever.reactive.market.backend.service.ReactiveOrderService;
+import ru.ugaforever.reactive.market.backend.service.ReactiveOrderCreationService;
+import ru.ugaforever.reactive.market.backend.service.ReactiveOrderReadService;
 
 import java.net.URI;
 import java.util.Collections;
@@ -16,11 +17,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OrderHandler {
 
-    private final ReactiveOrderService orderService;
+    private final ReactiveOrderReadService orderReadService;
+    private final ReactiveOrderCreationService orderCreationService;
     private final ReactiveCartService cartService;
 
     public Mono<ServerResponse> getOrders(ServerRequest request) {
-        return orderService.findAll()
+        return orderReadService.findAll()
                 .collectList()
                 .flatMap(orders -> ServerResponse.ok()
                         .render("orders", Map.of("orders", orders)))
@@ -32,7 +34,7 @@ public class OrderHandler {
         Long id = Long.parseLong(request.pathVariable("id"));
         Boolean newOrder = Boolean.parseBoolean(request.queryParam("newOrder").orElse("false"));
 
-        return orderService.findById(id)
+        return orderReadService.findById(id)
                 .flatMap(order ->
                         ServerResponse.ok()
                                 .render("order", Map.of(
@@ -53,7 +55,7 @@ public class OrderHandler {
                                         return Mono.error(new IllegalStateException("Корзина пуста"));
                                     }
 
-                                    return orderService.createOrder(session, items)
+                                    return orderCreationService.create(session, items)
                                             .flatMap(orderId ->
                                                     cartService.clearCart(session)
                                                             .thenReturn(orderId)

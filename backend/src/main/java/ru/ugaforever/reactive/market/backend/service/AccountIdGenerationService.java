@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.WebSession;
 
 @Component
-public class AccountIdGenerator {
+public class AccountIdGenerationService {
     public String generate(WebSession session) {
 
         Long accountId = session.getAttribute("accountId");

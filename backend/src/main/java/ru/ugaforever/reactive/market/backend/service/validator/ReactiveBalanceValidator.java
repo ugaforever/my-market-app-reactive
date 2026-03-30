@@ -1,4 +1,4 @@
-package ru.ugaforever.reactive.market.backend.service;
+package ru.ugaforever.reactive.market.backend.service.validator;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.payment.client.model.BalanceResponse;
 
 @Component
-public class BalanceValidator {
+public class ReactiveBalanceValidator {
     public Mono<BalanceResponse> validate(BalanceResponse balance, Long totalSum) {
         if (balance.getBalance().longValue() < totalSum) {
             return Mono.error(new ResponseStatusException(
