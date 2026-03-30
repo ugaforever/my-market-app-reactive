@@ -135,7 +135,6 @@ public class ReactiveItemController {
             @RequestParam String action,
             WebSession session) {
 
-        System.out.println("=== DEBUG: id=" + id + ", action=" + action);
         log.info("Received request: id='{}', action='{}'", id, action);
 
         return itemCacheService.findById(id)

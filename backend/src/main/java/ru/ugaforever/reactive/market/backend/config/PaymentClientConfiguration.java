@@ -2,6 +2,7 @@ package ru.ugaforever.reactive.market.backend.config;
 
 import io.netty.channel.ChannelOption;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import ru.ugaforever.reactive.market.payment.client.api.PaymentsApi;
 
 import java.time.Duration;
 
+@Slf4j
 @Configuration
 @ConfigurationProperties(prefix = "payment.service")
 @Data
@@ -26,10 +28,10 @@ public class PaymentClientConfiguration {
     @Bean
     public ApiClient paymentApiClient() {
 
-        System.out.println("========================================");
-        System.out.println("Creating ApiClient with URL: " + url);
-        System.out.println("PAYMENT_SERVICE_URL from env: " + System.getenv("PAYMENT_SERVICE_URL"));
-        System.out.println("========================================");
+        log.info("========================================");
+        log.info("Creating ApiClient with URL: " + url);
+        log.info("PAYMENT_SERVICE_URL from env: " + System.getenv("PAYMENT_SERVICE_URL"));
+        log.info("========================================");
 
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeout)
