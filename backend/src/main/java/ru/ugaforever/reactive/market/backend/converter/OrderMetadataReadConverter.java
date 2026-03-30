@@ -3,6 +3,7 @@ package ru.ugaforever.reactive.market.backend.converter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
+import ru.ugaforever.reactive.market.backend.exception.ObjectMapperException;
 import ru.ugaforever.reactive.market.backend.model.OrderMetadata;
 
 @ReadingConverter
@@ -15,7 +16,7 @@ public class OrderMetadataReadConverter implements Converter<String, OrderMetada
         try {
             return objectMapper.readValue(source, OrderMetadata.class);
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка преобразования JSON в OrderMetadata", e);
+            throw new ObjectMapperException("Ошибка преобразования JSON в OrderMetadata", e);
         }
     }
 }

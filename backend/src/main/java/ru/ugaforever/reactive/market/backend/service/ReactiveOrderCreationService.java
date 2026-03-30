@@ -8,6 +8,7 @@ import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.backend.dto.ItemDTO;
+import ru.ugaforever.reactive.market.backend.exception.OrderCreationException;
 import ru.ugaforever.reactive.market.backend.model.Order;
 import ru.ugaforever.reactive.market.backend.model.OrderItem;
 import ru.ugaforever.reactive.market.backend.repository.ReactiveItemRepository;
@@ -43,7 +44,7 @@ public class ReactiveOrderCreationService {
         return Flux.fromIterable(items)
                 .flatMap(itemDto ->
                         itemRepository.findById(itemDto.getId())
-                                .switchIfEmpty(Mono.error(new RuntimeException("Товар не найден: " + itemDto.getId())))
+                                .switchIfEmpty(Mono.error(new OrderCreationException("Товар не найден: " + itemDto.getId())))
                                 .flatMap(item ->
                                         cartService.getCount(session, item.getId())
                                                 .map(count -> OrderItem.builder()

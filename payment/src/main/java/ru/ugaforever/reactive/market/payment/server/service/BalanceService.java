@@ -3,6 +3,8 @@ package ru.ugaforever.reactive.market.payment.server.service;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.payment.server.domain.BalanceResponse;
+import ru.ugaforever.reactive.market.payment.server.exception.InsufficientFundsException;
+
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -35,7 +37,7 @@ public class BalanceService {
             return Mono.empty();
         }
         if (balance.compareTo(amount) < 0) {
-            return Mono.error(new IllegalArgumentException("Insufficient funds"));
+            return Mono.error(new InsufficientFundsException("Недостаточно средств."));
         }
         BigDecimal newBalance = balance.subtract(amount);
         balances.put(accountId, newBalance);
