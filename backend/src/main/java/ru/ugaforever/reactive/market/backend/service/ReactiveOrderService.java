@@ -25,6 +25,7 @@ public class ReactiveOrderService {
     private final ReactiveItemRepository itemRepository;
     private final ReactiveCartService cartService;
     private final ReactivePaymentService paymentService;
+    private final AccountIdGenerator accountIdGenerator;
 
     public Mono<Order> findById(Long id) {
         return orderRepository.findById(id)
@@ -43,12 +44,7 @@ public class ReactiveOrderService {
         }
 
         // имитация accountId
-        Long accountId = session.getAttribute("accountId");
-        if (accountId == null) {
-            accountId = generateAccountId();
-            session.getAttributes().put("accountId", accountId);
-        }
-        final String finalAccountId = accountId.toString();
+        final String finalAccountId = accountIdGenerator.generate(session);
 
         return Flux.fromIterable(items)
                 .flatMap(itemDto ->
@@ -105,8 +101,6 @@ public class ReactiveOrderService {
                 });
     }
 
-    private Long generateAccountId() {
-        return System.currentTimeMillis() + (long) (Math.random() * 10000);
-    }
+
 }
 
