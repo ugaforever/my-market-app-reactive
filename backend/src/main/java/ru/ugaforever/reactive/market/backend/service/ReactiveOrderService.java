@@ -26,6 +26,8 @@ public class ReactiveOrderService {
     private final ReactiveCartService cartService;
     private final ReactivePaymentService paymentService;
     private final AccountIdGenerator accountIdGenerator;
+    private final BalanceValidator balanceValidator;
+    private final PaymentValidator paymentValidator;
 
     public Mono<Order> findById(Long id) {
         return orderRepository.findById(id)
@@ -74,31 +76,20 @@ public class ReactiveOrderService {
                             .build();
 
                     return paymentService.getBalance(finalAccountId)
-                            .flatMap(balance -> {
-                                if (balance.getBalance().longValue() < totalSum) {
-                                    return Mono.error(new ResponseStatusException(
-                                            HttpStatus.PAYMENT_REQUIRED,
-                                            "Недостаточно средств. Доступно: " + balance.getBalance()
-                                    ));
-                                }
-                                return paymentService.processPayment(paymentRequest);
-                            })
-                            .flatMap(paymentResponse -> {
-                                if (!"SUCCESS".equals(paymentResponse.getStatus())) {
-                                    return Mono.error(new ResponseStatusException(
-                                            HttpStatus.PAYMENT_REQUIRED,
-                                            "Оплата не прошла: " + paymentResponse.getStatus()
-                                    ));
-                                }
-
-                                Order order = new Order();
-                                order.setTotalSum(totalSum);
-                                orderItems.forEach(order::addItem);
-
-                                return orderRepository.save(order)
-                                        .map(Order::getId);
-                            });
+                            .flatMap(balance -> balanceValidator.validate(balance, totalSum))
+                            .flatMap(balance -> paymentService.processPayment(paymentRequest))
+                            .flatMap(responce -> paymentValidator.validate(responce))
+                            .flatMap(responcde -> saveOrder(totalSum, orderItems));
                 });
+    }
+
+    private Mono<Long> saveOrder(long totalSum, List<OrderItem> orderItems){
+        Order order = new Order();
+        order.setTotalSum(totalSum);
+        orderItems.forEach(order::addItem);
+
+        return orderRepository.save(order)
+                .map(Order::getId);
     }
 
 
