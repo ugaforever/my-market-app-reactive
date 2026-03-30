@@ -46,14 +46,11 @@ public class ReactiveOrderCreationService {
                                 .switchIfEmpty(Mono.error(new RuntimeException("Товар не найден: " + itemDto.getId())))
                                 .flatMap(item ->
                                         cartService.getCount(session, item.getId())
-                                                .map(count -> {
-                                                    OrderItem orderItem = OrderItem.builder()
-                                                            .item(item)
-                                                            .price(item.getPrice())
-                                                            .quantity(count)
-                                                            .build();
-                                                    return orderItem;
-                                                })
+                                                .map(count -> OrderItem.builder()
+                                                        .item(item)
+                                                        .price(item.getPrice())
+                                                        .quantity(count)
+                                                        .build())
                                 )
                 )
                 .collectList()
@@ -71,7 +68,7 @@ public class ReactiveOrderCreationService {
                             .flatMap(balance -> balanceValidator.validate(balance, totalSum))
                             .flatMap(balance -> paymentService.processPayment(paymentRequest))
                             .flatMap(responce -> paymentValidator.validate(responce))
-                            .flatMap(responcde -> saveOrder(totalSum, orderItems));
+                            .flatMap(responce -> saveOrder(totalSum, orderItems));
                 });
     }
 
