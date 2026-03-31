@@ -1,71 +1,60 @@
-# Веб-приложение «Витрина интернет-магазина» с использованием Spring Boot в реактивном стиле
+# Веб-приложение «Витрина интернет-магазина» с использованием Spring Boot в реактивном стиле c Redis кэшем товаров и RESTfull серсивом оплаты
 
 Проект создан в рамках обучения на курсе **Мидл Java-разработчик** от **practicum.yandex.ru**.
 
 ## Задание
-Перепишите веб-приложение «Витрина интернет-магазина» с использованием Spring Boot на реактивном стеке технологий
+На основе существующего проекта «Витрина интернет-магазина» разработать RESTful-сервис платежей с помощью OpenAPI и использовать Redis в качестве кеша товаров.
 
-Витрина на блокирующем стеке https://github.com/ugaforever/my-market-app
+https://github.com/ugaforever/my-market-app-reactive/tree/module_two_sprint_six_branch
 
 ## Стек
 - Java 21, Maven
 - Spring Boot, WebFlux (Reactor: Mono/Flux), Thymeleaf
 - Spring Data R2DBC, H2
-- JUnit 5, WebTestClient
-
-## Требования
-- JDK 21
-- Maven или Maven Wrapper из проекта
+- Spring Data Redis Reactive
+- JUnit 5, WebTestClient, WebFluxTest, SpringBootTest
+- OpenAPI 3.0
+- Docker Compose
 
 ##  Сборка и запуск в среде разработки
 
 ```bash
-# Запуск
-./mvnw spring-boot:run
-
-# Перейти на страницу сайта
-http://localhost:9090/
-http://localhost:9090/items
-```
-
-##  Сборка и запуск локально
-
-```bash
 # В корневую директорию проекта
-cd ./my-market-app
+cd ./my-market-app-reactive
 
-# Сборка JAR
-./mvnw clean package
+# Запуск redis
+docker run -d --name redis-server -it --rm -p 6379:6379 redis:7.4.2-bookworm
 
-# Запуск
-java -jar ./target/my-market-app-0.0.1-SNAPSHOT.jar
+# Запуск payment
+./mvnw spring-boot:run -pl payment
 
-# Перейти на страницу сайта
+# Запуск backend
+./mvnw spring-boot:run -pl backend
+
+# Cтраница сайта
 http://localhost:9090/
 http://localhost:9090/items
+# Cтраница Swagger-UI
+http://localhost:9091/swagger-ui/index.html
 ```
 
 ##  Сборка и запуск в контейнере Docker
 
 ```bash
 # В корневую директорию проекта
-cd ./my-market-app
+cd ./my-market-app-reactive
 
-# Сборка проекта
+# Сборка всего мультипроекта
 ./mvnw clean package
 
-# Сборка Docker образа с тегом my-market-app:latest
-docker build -t my-market-app:latest .
+# Запуск контейнеров: redis, payment, backend  
+docker compose up -d
 
-# Запуск контейнера в фоновом режиме
-docker run -d --name market -p 9090:9090 my-market-app:latest
-# ИЛИ
-# Запуск контейнера и автоудаление после остановки
-docker run --rm -p 9090:9090 my-market-app:latest
-
-# Перейти на страницу сайта
+# Cтраница сайта
 http://localhost:9090/
 http://localhost:9090/items
+# Cтраница Swagger-UI
+http://localhost:9091/swagger-ui/index.html
 ```
 
 

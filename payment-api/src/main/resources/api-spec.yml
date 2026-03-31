@@ -1,0 +1,106 @@
+openapi: 3.0.2
+info:
+  title: Payment Service API
+  description: Реактивный сервис для управления платежами
+  version: 1.0.0
+  contact:
+    email: foreveruga@yandex.ru
+servers:
+  - url: http://localhost:9091/api/v1
+    description: Local server
+  - url: http://localhost:9091/swagger-ui/index.html
+    description: Swagger UI
+  - url: http://localhost:9091/v3/api-docs
+    description: OpenAPI JSON
+
+tags:
+  - name: Balance
+    description: Операции с балансом
+  - name: Payments
+    description: Операции с платежами
+
+paths:
+  /balance/{accountId}:
+    get:
+      tags:
+        - Balance
+      summary: Получить баланс счета
+      operationId: getBalance
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /payments:
+    post:
+      tags:
+        - Payments
+      operationId: processPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '422':
+          description: Insufficient Funds
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    BalanceResponse:
+      type: object
+      properties:
+        accountId:
+          type: string
+        balance:
+          type: number
+        currency:
+          type: string
+    PaymentRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+        amount:
+          type: number
+    PaymentResponse:
+      type: object
+      properties:
+        transactionId:
+          type: string
+        newBalance:
+          type: number
+        status:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        message:
+          type: string
+
