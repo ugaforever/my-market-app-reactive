@@ -1,5 +1,19 @@
 services:
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9092/health/ready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   redis:
     image: redis:7.4.2-bookworm
     container_name: redis
