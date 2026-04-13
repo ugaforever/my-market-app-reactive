@@ -2,11 +2,17 @@ package ru.ugaforever.reactive.market.payment.server.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.client.reactive.ReactiveOAuth2ClientAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.reactive.ReactiveOAuth2ResourceServerAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
+import ru.ugaforever.reactive.market.payment.server.config.SecurityConfig;
 import ru.ugaforever.reactive.market.payment.server.domain.BalanceResponse;
 import ru.ugaforever.reactive.market.payment.server.domain.PaymentRequest;
 import ru.ugaforever.reactive.market.payment.server.service.BalanceService;
@@ -15,7 +21,14 @@ import java.math.BigDecimal;
 
 import static org.mockito.Mockito.when;
 
-@WebFluxTest(PaymentController.class)
+@WebFluxTest(
+        controllers = PaymentController.class,
+        excludeAutoConfiguration = {
+                ReactiveSecurityAutoConfiguration.class,
+                ReactiveOAuth2ClientAutoConfiguration.class,
+                ReactiveOAuth2ResourceServerAutoConfiguration.class
+        }
+)
 class PaymentControllerTest {
 
     @Autowired

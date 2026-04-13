@@ -2,6 +2,9 @@ package ru.ugaforever.reactive.market.payment.server.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.client.reactive.ReactiveOAuth2ClientAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.reactive.ReactiveOAuth2ResourceServerAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 
 import org.springframework.security.test.context.support.WithMockUser;
@@ -15,7 +18,14 @@ import java.math.BigDecimal;
 
 import static org.mockito.Mockito.when;
 
-@WebFluxTest(BalanceController.class)
+@WebFluxTest(
+        controllers = BalanceController.class,
+        excludeAutoConfiguration = {
+                ReactiveSecurityAutoConfiguration.class,
+                ReactiveOAuth2ClientAutoConfiguration.class,
+                ReactiveOAuth2ResourceServerAutoConfiguration.class
+        }
+)
 class BalanceControllerTest {
 
     @Autowired
@@ -25,7 +35,6 @@ class BalanceControllerTest {
     private BalanceService balanceService;
 
     @Test
-    @WithMockUser(authorities = "SERVICE")
     void getBalance_WhenAccountExists_ShouldReturnBalance() {
 
         BigDecimal accountId = new BigDecimal(12345);
