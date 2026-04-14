@@ -43,7 +43,7 @@ public class SecurityConfiguration {
                                                             RedirectServerLogoutSuccessHandler redirectServerLogoutSuccessHandler) {
         http
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()) // React ((
                 )
 
                 .authorizeExchange(exchanges -> exchanges
