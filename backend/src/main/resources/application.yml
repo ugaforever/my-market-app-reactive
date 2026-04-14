@@ -24,15 +24,30 @@ spring:
     url: r2dbc:h2:mem:///marketdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
+
   thymeleaf:
     cache: false
     prefix: classpath:/templates/
     suffix: .html
+
   sql:
     init:
       mode: always
       platform: h2
 
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: backend
+            client-secret: yfrzENBRq2TJtYLlDTmXaTsj42egKzbb
+            authorization-grant-type: client_credentials
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:9092/realms/my-market-app
 payment:
   service:
     url: ${PAYMENT_SERVICE_URL:http://localhost:9091}
