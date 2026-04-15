@@ -25,7 +25,6 @@ import static org.mockito.Mockito.when;
         controllers = PaymentController.class,
         excludeAutoConfiguration = {
                 ReactiveSecurityAutoConfiguration.class,
-                ReactiveOAuth2ClientAutoConfiguration.class,
                 ReactiveOAuth2ResourceServerAutoConfiguration.class
         }
 )

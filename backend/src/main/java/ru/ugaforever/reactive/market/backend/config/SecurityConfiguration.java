@@ -21,11 +21,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfiguration {
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public WebSessionServerCsrfTokenRepository csrfTokenRepository() {
         return new WebSessionServerCsrfTokenRepository();
     }
@@ -42,17 +37,19 @@ public class SecurityConfiguration {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http,
                                                             RedirectServerLogoutSuccessHandler redirectServerLogoutSuccessHandler) {
         http
-                .csrf(csrf -> csrf
+                .csrf(csrf -> csrf.disable())
+                /*.csrf(csrf -> csrf
                         .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()) // React ((
-                )
+                )*/
+
 
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/login").permitAll()
+                        .pathMatchers("/", "/login", "/images/**", "/css/**", "/js/**", "/favicon.ico").permitAll()
                         .anyExchange().authenticated()
                 )
 
                 .oauth2Login(oauth2 -> oauth2
-                        .authenticationSuccessHandler(new RedirectServerAuthenticationSuccessHandler("/"))
+                        .authenticationSuccessHandler(new RedirectServerAuthenticationSuccessHandler("/items"))
                         .loginPage("/oauth2/authorization/keycloak"))
 
                 .logout(logout -> logout

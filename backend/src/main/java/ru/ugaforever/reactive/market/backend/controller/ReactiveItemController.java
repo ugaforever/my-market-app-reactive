@@ -3,6 +3,7 @@ package ru.ugaforever.reactive.market.backend.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +35,15 @@ public class ReactiveItemController {
             @RequestParam(required = false, defaultValue = "NO") String sort,
             @RequestParam(required = false, defaultValue = "1") int pageNumber,
             @RequestParam(required = false, defaultValue = "5") int pageSize,
-            WebSession session) {
+            WebSession session,
+            Authentication authentication) {
 
         if (pageNumber < 1) {
             pageNumber = 1;
         }
+
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
+        String username = isAuthenticated ? authentication.getName() : null;
 
         Sort springSort = ItemUtils.convertToSpringSort(sort);
 
@@ -67,11 +72,16 @@ public class ReactiveItemController {
                                             .modelAttribute("paging", updatedPage)
                                             .modelAttribute("search", search)
                                             .modelAttribute("sort", sort)
+                                            .modelAttribute("authenticated", isAuthenticated)
+                                            .modelAttribute("username", username)
                                             .build();
                                 })
                 )
                 .switchIfEmpty(Mono.just(
-                        Rendering.view("items").build()
+                        Rendering.view("items")
+                                .modelAttribute("authenticated", isAuthenticated)
+                                .modelAttribute("username", username)
+                                .build()
                 ));
     }
 
