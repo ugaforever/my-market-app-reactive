@@ -6,9 +6,12 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.RedirectServerLogoutSuccessHandler;
+import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.security.web.server.csrf.WebSessionServerCsrfTokenRepository;
 
@@ -35,7 +38,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http,
-                                                            RedirectServerLogoutSuccessHandler redirectServerLogoutSuccessHandler) {
+                                                            ReactiveClientRegistrationRepository clientRegistrationRepository) {
         http
                 .csrf(csrf -> csrf.disable())
                 /*.csrf(csrf -> csrf
@@ -53,14 +56,23 @@ public class SecurityConfiguration {
                         .loginPage("/oauth2/authorization/keycloak"))
 
                 .logout(logout -> logout
-                        // URL страницы выхода
                         .logoutUrl("/logout")
-                        .logoutSuccessHandler(redirectServerLogoutSuccessHandler)
+                        .logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository))
                 )
-                // OAuth2 Client для WebClient
                 .oauth2Client(withDefaults());
 
         return http.build();
+    }
+
+    private ServerLogoutSuccessHandler oidcLogoutSuccessHandler(
+            ReactiveClientRegistrationRepository clientRegistrationRepository) {
+
+        OidcClientInitiatedServerLogoutSuccessHandler successHandler =
+                new OidcClientInitiatedServerLogoutSuccessHandler(clientRegistrationRepository);
+
+        successHandler.setPostLogoutRedirectUri("{baseUrl}");
+
+        return successHandler;
     }
 
 }
