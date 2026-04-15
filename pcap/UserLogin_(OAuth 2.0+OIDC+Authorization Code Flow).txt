@@ -1,0 +1,67 @@
+Описание основных этапов аутентификации + авторизации пользователя на backend через Keycloak. (в учебных целях backend он же frontend)
+
+9090 backend
+9092 keycloak
+
+
+1. Spring Boot сам загружает OpenID Connect Discovery документ от Keycloak, получая endpoints: authorization_endpoint, token_endpoint, userinfo_endpoint, jwks_uri и т.д.
+GET http://localhost:9092/realms/my-market-app/.well-known/openid-configuration
+
+2. Пользователь запрашивает защищенный ресурс
+GET "/oauth2/authorization/keycloak"
+
+	Пользователь пытается зайти на защищенную страницу
+	Spring Security перенаправляет на authorization endpoint Keycloak
+	Создается новая WebSession!
+
+3. Редирект на страницу входа Keycloak
+http://localhost:9092/realms/my-market-app/protocol/openid-connect/auth?
+  response_type=code&
+  client_id=backend&
+  redirect_uri=http://localhost:9090/login/oauth2/code/keycloak&
+  scope=openid
+
+4. Пользователь вводит логин/пароль
+
+5. Keycloak редиректит обратно с authorization code
+GET "/login/oauth2/code/keycloak?
+  state=bCgI5hbSpCST4xHV_CIJapxSTiFVyC9gX7s9bWkNY2c%3D&
+  session_state=ea97d48b-a7ec-4e3b-b0a7-a82dce5c795e&
+  iss=http%3A%2F%2Flocalhost%3A9092%2Frealms%2Fmy-market-app&
+  code=ddbb1552-429b-494a-a13d-62d7b42d8c7c..."
+
+	Keycloak передает authorization code обратно в ваше приложение!!
+
+6. Обмен code на tokens
+POST http://localhost:9092/realms/my-market-app/protocol/openid-connect/token
+
+	Decoded [{access_token=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0...]
+
+	backend обменивает authorization code на:
+		access_token (JWT) — для доступа к API
+		refresh_token — для обновления access_token
+		id_token (JWT) — информация о пользователе
+
+7. Получение public keys для валидации JWT
+HTTP GET http://localhost:9092/realms/my-market-app/protocol/openid-connect/certs
+
+	Decoded "{"keys":[{"kid":"9GrAbuQz-YltciISJCN5lgO4rVhm9re48lNdMlqpSq8"...}"
+
+	Spring Security загружает public keys от Keycloak для проверки подписи JWT токенов
+
+8. Получение информации о пользователе
+GET http://localhost:9092/realms/my-market-app/protocol/openid-connect/userinfo
+
+	Decoded [{
+	  sub=4aafaab3-4a3d-4ab1-a4ad-3125fac6aecd,
+	  email_verified=false,
+	  name=test user,
+	  preferred_username=testuser,
+	  .......}]
+
+
+9. Успешная аутентификация
+
+10. Перенаправление на запрошенный ресурс (/items)
+GET "/items"
+	Доступ разрешен!
