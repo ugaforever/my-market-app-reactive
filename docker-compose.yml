@@ -10,7 +10,7 @@ services:
     ports:
       - "9092:8080"
     volumes:
-      - ./keycloak-import:/opt/keycloak/data/import
+      - ./keycloak:/opt/keycloak/data/import
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9092/health/ready" ]
       interval: 10s
