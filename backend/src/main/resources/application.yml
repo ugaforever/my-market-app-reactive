@@ -39,6 +39,15 @@ spring:
     oauth2:
       client:
         registration:
+          # Регистрация для payment service (Client Credentials Flow)
+          payment-service:
+            provider: keycloak
+            client-id: payment-service
+            client-secret: 6MwDZRNt9EAGr3ttNT2XK6pUWMHNTIHC
+            authorization-grant-type: client_credentials
+            scope: openid
+
+          # Регистрация для пользователей (Authorization Code Flow)
           keycloak:
             provider: keycloak
             client-id: backend
@@ -51,7 +60,7 @@ spring:
             issuer-uri: http://localhost:9092/realms/my-market-app
 payment:
   service:
-    url: ${PAYMENT_SERVICE_URL:http://localhost:9091}
+    url: ${PAYMENT_SERVICE_URL:http://localhost:9091/api/v1}
     connect-timeout: 5000
     read-timeout: 5000
 
@@ -59,3 +68,5 @@ logging:
   level:
     org.springframework.web: DEBUG
     ru.ugaforever.my_market_app: DEBUG
+    org.springframework.security.oauth2.client: DEBUG
+    org.springframework.security.oauth2.core: DEBUG

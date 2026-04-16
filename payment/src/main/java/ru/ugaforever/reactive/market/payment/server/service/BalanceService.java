@@ -17,7 +17,7 @@ public class BalanceService {
     public Mono<BalanceResponse> getBalance(String accountId) {
 
         // в рамках учебного проекта
-        // пользователь генерируется на backend для каждой новой WebSession
+        // accountId это UUID пользователя зарегистированного в Keycloak
         // пополняем по умолчанию
         balances.computeIfAbsent(accountId, key -> new BigDecimal(5000));
 

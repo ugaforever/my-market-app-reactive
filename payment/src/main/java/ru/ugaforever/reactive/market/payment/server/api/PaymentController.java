@@ -25,7 +25,7 @@ public class PaymentController implements PaymentsApi {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SERVICE')")
+    //@PreAuthorize("hasAuthority('SERVICE')")
     public Mono<ResponseEntity<PaymentResponse>> processPayment(Mono<PaymentRequest> paymentRequest,
                                                                 ServerWebExchange exchange) {
 

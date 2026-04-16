@@ -30,7 +30,7 @@ GET "/login/oauth2/code/keycloak?
   iss=http%3A%2F%2Flocalhost%3A9092%2Frealms%2Fmy-market-app&
   code=ddbb1552-429b-494a-a13d-62d7b42d8c7c..."
 
-	Keycloak передает authorization code обратно в ваше приложение!!
+	Keycloak передает authorization code обратно в backend!
 
 6. Обмен code на tokens
 POST http://localhost:9092/realms/my-market-app/protocol/openid-connect/token

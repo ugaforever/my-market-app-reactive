@@ -1,3 +1,4 @@
+/*
 package ru.ugaforever.reactive.market.backend.advice;
 
 import org.springframework.dao.DataAccessException;
@@ -122,3 +123,4 @@ public class ReactiveGlobalExceptionHandler {
                 .build());
     }
 }
+*/
