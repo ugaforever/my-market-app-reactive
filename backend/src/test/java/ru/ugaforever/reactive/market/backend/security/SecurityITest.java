@@ -24,7 +24,7 @@ class SecurityITest {
     private WebClient webClient;
 
     @Test
-    void adminEndpoint() {
+    void testGetAdmin_ShouldReturn200() {
         webTestClient.mutateWith(
                 SecurityMockServerConfigurers.mockAuthentication(
                                 new UsernamePasswordAuthenticationToken(
@@ -35,5 +35,19 @@ class SecurityITest {
                 .uri("/admin")
                 .exchange()
                 .expectStatus().isOk();
+    }
+
+    @Test
+    void testGetAdmin_ShouldReturn403() {
+        webTestClient.mutateWith(
+                        SecurityMockServerConfigurers.mockAuthentication(
+                                new UsernamePasswordAuthenticationToken(
+                                        "admin", null, List.of(new SimpleGrantedAuthority("ROLE_NOT_ADMIN"))
+                                )
+                        ))
+                .get()
+                .uri("/admin")
+                .exchange()
+                .expectStatus().isForbidden();
     }
 }

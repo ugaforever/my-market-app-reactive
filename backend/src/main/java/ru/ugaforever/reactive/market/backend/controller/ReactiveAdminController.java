@@ -10,10 +10,10 @@ import reactor.core.publisher.Mono;
 @Slf4j  // (log)
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class ReactiveAdminController {
 
     @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
     public Mono<String> adminEndpoint() {
         return Mono.just("Admin-only endpoint");
     }
