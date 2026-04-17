@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Import({ReactiveDatabaseInitializer.class, TestSecurityConfiguration.class})
 @AutoConfigureWebTestClient
-class ReactiveItemControllerITest {
+class ItemControllerITest {
 
     @Autowired
     private WebTestClient webTestClient;
