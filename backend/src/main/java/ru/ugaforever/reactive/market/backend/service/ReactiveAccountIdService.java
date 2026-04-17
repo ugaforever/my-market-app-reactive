@@ -5,7 +5,6 @@ import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Mono;
 
 @Component
