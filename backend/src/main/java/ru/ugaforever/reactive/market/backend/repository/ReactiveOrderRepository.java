@@ -1,5 +1,6 @@
 package ru.ugaforever.reactive.market.backend.repository;
 
+import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import ru.ugaforever.reactive.market.backend.model.Order;
@@ -14,6 +15,7 @@ import ru.ugaforever.reactive.market.backend.model.Order;
 @Repository
 public interface ReactiveOrderRepository extends ReactiveCrudRepository<Order, Long> {
 
+    Publisher<? extends Order> findByAccountId(String accountId);
 }
 
 

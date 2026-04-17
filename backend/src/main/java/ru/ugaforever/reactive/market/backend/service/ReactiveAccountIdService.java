@@ -16,7 +16,7 @@ public class ReactiveAccountIdService {
                 .map(SecurityContext::getAuthentication)
                 .filter(auth -> auth != null && auth.isAuthenticated());
     }
-
+    //UUID Keycloak
     public Mono<String> getCurrentUserId() {
         return getCurrentAuthentication()
                 .map(Authentication::getName);

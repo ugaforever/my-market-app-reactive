@@ -14,20 +14,25 @@ import ru.ugaforever.reactive.market.backend.repository.ReactiveOrderRepository;
 public class ReactiveOrderReadService {
 
     private final ReactiveOrderRepository orderRepository;
+    private final ReactiveAccountIdService accountIdService;
 
     public Mono<Order> findById(Long id) {
-        return orderRepository.findById(id)
-                .switchIfEmpty(Mono.error(
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Заказ с ID " + id + " не найден")
-                ));
+        return accountIdService.getCurrentUserId()
+                .flatMap(accountId -> orderRepository.findById(id)
+                        .filter(order -> order.getAccountId().equals(accountId))
+                        .switchIfEmpty(Mono.error(
+                                new ResponseStatusException(HttpStatus.NOT_FOUND, "Заказ с ID " + id + " не найден"))
+                        )
+                );
     }
+
+    /*public Flux<Order> findAll() {
+        return orderRepository.findAll();
+    }*/
 
     public Flux<Order> findAll() {
-        return orderRepository.findAll();
+        return accountIdService.getCurrentUserId()
+                .flatMapMany(accountId -> orderRepository.findByAccountId(accountId));
     }
-
-
-
-
 }
 

@@ -93,9 +93,7 @@ public class ReactiveOrderCreationService {
     private Mono<Long> saveOrder(String accountId, long totalSum, List<OrderItem> orderItems) {
 
         Order order = new Order();
-
-        //order.setAccountId
-
+        order.setAccountId(accountId);
         order.setTotalSum(totalSum);
         orderItems.forEach(order::addItem);
 
