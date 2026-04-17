@@ -7,9 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
@@ -21,9 +19,6 @@ class SecurityITest {
 
     @Autowired
     private WebTestClient webTestClient;
-
-    @MockitoBean
-    private WebClient webClient;
 
     @Test
     void testGetAdmin_ShouldReturn200() {
