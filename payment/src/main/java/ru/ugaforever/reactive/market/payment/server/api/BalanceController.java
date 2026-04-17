@@ -21,7 +21,7 @@ public class BalanceController implements BalanceApi {
     }
 
     @Override
-    //@PreAuthorize("hasAuthority('SERVICE')")
+    @PreAuthorize("hasAuthority('SERVICE')")
     public Mono<ResponseEntity<BalanceResponse>> getBalance(
             @PathVariable("accountId") String accountId,
             ServerWebExchange exchange) {
