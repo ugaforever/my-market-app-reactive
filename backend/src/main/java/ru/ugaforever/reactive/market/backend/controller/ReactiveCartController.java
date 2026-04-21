@@ -2,6 +2,7 @@ package ru.ugaforever.reactive.market.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/cart")
+@PreAuthorize("isAuthenticated()")
 public class ReactiveCartController {
 
     private final ReactiveCartService cartService;
