@@ -16,6 +16,7 @@ import ru.ugaforever.reactive.market.backend.repository.ReactiveOrderRepository;
 import ru.ugaforever.reactive.market.backend.service.validator.ReactiveBalanceValidator;
 import ru.ugaforever.reactive.market.backend.service.validator.ReactivePaymentValidator;
 import ru.ugaforever.reactive.market.payment.client.model.PaymentRequest;
+import ru.ugaforever.reactive.market.payment.client.model.PaymentResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,19 +29,29 @@ public class ReactiveOrderCreationService {
     private final ReactiveItemRepository itemRepository;
     private final ReactiveCartService cartService;
     private final ReactivePaymentService paymentService;
-    private final AccountIdGenerationService accountIdGenerator;
     private final ReactiveBalanceValidator balanceValidator;
     private final ReactivePaymentValidator paymentValidator;
     private final ReactiveBalanceService balanceService;
+    private final ReactiveAccountIdService accountIdService;
 
     public Mono<Long> create(WebSession session, List<ItemDTO> items) {
         if (items == null || items.isEmpty()) {
             return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Список товаров пуст"));
         }
 
-        // имитация accountId
-        final String finalAccountId = accountIdGenerator.generate(session);
+        return accountIdService.getCurrentUserId()
+                .flatMap(accountId ->
+                        getOrderItems(session, items)
+                                .flatMap(orderItems -> {
+                                    long totalSum = calculateTotalSum(orderItems);
 
+                                    return processPayment(accountId, totalSum)
+                                            .flatMap(paymentResponse -> saveOrder(accountId, totalSum, orderItems));
+                                })
+                );
+    }
+
+    private Mono<List<OrderItem>> getOrderItems(WebSession session, List<ItemDTO> items) {
         return Flux.fromIterable(items)
                 .flatMap(itemDto ->
                         itemRepository.findById(itemDto.getId())
@@ -54,27 +65,35 @@ public class ReactiveOrderCreationService {
                                                         .build())
                                 )
                 )
-                .collectList()
-                .flatMap(orderItems -> {
-                    long totalSum = orderItems.stream()
-                            .mapToLong(oi -> (long) (oi.getPrice() * oi.getQuantity()))
-                            .sum();
-
-                    PaymentRequest paymentRequest = PaymentRequest.builder()
-                            .accountId(finalAccountId)
-                            .amount(BigDecimal.valueOf(totalSum))
-                            .build();
-
-                    return balanceService.getBalance(finalAccountId)
-                            .flatMap(balance -> balanceValidator.validate(balance, totalSum))
-                            .flatMap(balance -> paymentService.processPayment(paymentRequest))
-                            .flatMap(responce -> paymentValidator.validate(responce))
-                            .flatMap(responce -> saveOrder(totalSum, orderItems));
-                });
+                .collectList();
     }
 
-    private Mono<Long> saveOrder(long totalSum, List<OrderItem> orderItems){
+    private long calculateTotalSum(List<OrderItem> orderItems) {
+        return orderItems.stream()
+                .mapToLong(oi -> (long) (oi.getPrice() * oi.getQuantity()))
+                .sum();
+    }
+
+    private PaymentRequest createPaymentRequest(String accountId, long totalSum) {
+        return PaymentRequest.builder()
+                .accountId(accountId)
+                .amount(BigDecimal.valueOf(totalSum))
+                .build();
+    }
+
+    private Mono<PaymentResponse> processPayment(String accountId, long totalSum) {
+        PaymentRequest paymentRequest = createPaymentRequest(accountId, totalSum);
+
+        return balanceService.getBalance(accountId)
+                .flatMap(balance -> balanceValidator.validate(balance, totalSum))
+                .flatMap(balance -> paymentService.processPayment(paymentRequest))
+                .flatMap(paymentValidator::validate);
+    }
+
+    private Mono<Long> saveOrder(String accountId, long totalSum, List<OrderItem> orderItems) {
+
         Order order = new Order();
+        order.setAccountId(accountId);
         order.setTotalSum(totalSum);
         orderItems.forEach(order::addItem);
 

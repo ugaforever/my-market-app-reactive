@@ -26,6 +26,9 @@ public class Order {
     @Id
     private Long id;
 
+    @Column("account_id")
+    String accountId;
+
     @Column("total_sum")
     long totalSum;
 

@@ -14,34 +14,51 @@ import ru.ugaforever.reactive.market.backend.repository.ReactiveItemRepository;
 public class ReactiveCartService {
 
     private final ReactiveItemRepository itemRepository;
+    private final ReactiveAccountIdService accountIdService;
 
-    private static final String CART_ATTRIBUTE = "cart";
+    private static final String CART_ATTRIBUTE_PREFIX = "cart:";
 
-    // Получаем корзину из сессии по ключу CART_ATTRIBUTE
+    // Генерация уникального имени корзины для пользователей (cart:UUID)
+    private Mono<String> getCartName() {
+        return accountIdService.getCurrentUserId()
+                .map(accountId -> CART_ATTRIBUTE_PREFIX + accountId);
+    }
+
     public Mono<ReactiveCart> getCart(WebSession session) {
-        return Mono.justOrEmpty(session.<ReactiveCart>getAttribute(CART_ATTRIBUTE))
-                .switchIfEmpty(
-                        Mono.just(ReactiveCart.empty())
-                                .doOnNext(cart -> session.getAttributes().put(CART_ATTRIBUTE, cart))
-                );
+        return getCartName()
+                .flatMap(cartName ->
+                        Mono.justOrEmpty(session.<ReactiveCart>getAttribute(cartName))
+                                .switchIfEmpty(
+                                        Mono.just(ReactiveCart.empty())
+                                                .doOnNext(cart -> session.getAttributes().put(cartName, cart))
+                                ));
     }
 
     public Mono<ReactiveCart> plusItem(WebSession session, Long itemId) {
-        return getCart(session)
-                .map(cart -> cart.plusItem(itemId))
-                .doOnNext(newCart -> session.getAttributes().put(CART_ATTRIBUTE, newCart));
+        return getCartName()
+                .flatMap(cartName ->
+                        getCart(session)
+                                .map(cart -> cart.plusItem(itemId))
+                                .doOnNext(newCart -> session.getAttributes().put(cartName, newCart))
+                );
     }
 
     public Mono<ReactiveCart> minusItem(WebSession session, Long itemId) {
-        return getCart(session)
-                .map(cart -> cart.minusItem(itemId))
-                .doOnNext(newCart -> session.getAttributes().put(CART_ATTRIBUTE, newCart));
+        return getCartName()
+                .flatMap(cartName ->
+                        getCart(session)
+                                .map(cart -> cart.minusItem(itemId))
+                                .doOnNext(newCart -> session.getAttributes().put(cartName, newCart))
+                );
     }
 
     public Mono<ReactiveCart> removeItem(WebSession session, Long itemId) {
-        return getCart(session)
-                .map(cart -> cart.removeItem(itemId))
-                .doOnNext(newCart -> session.getAttributes().put(CART_ATTRIBUTE, newCart));
+        return getCartName()
+                .flatMap(cartName ->
+                        getCart(session)
+                                .map(cart -> cart.removeItem(itemId))
+                                .doOnNext(newCart -> session.getAttributes().put(cartName, newCart))
+                );
     }
 
     public Mono<Integer> getCount(WebSession session, Long itemId) {
@@ -50,9 +67,12 @@ public class ReactiveCartService {
     }
 
     public Mono<ReactiveCart> clearCart(WebSession session) {
-        return getCart(session)
-                .map(ReactiveCart::clear)
-                .doOnNext(newCart -> session.getAttributes().put(CART_ATTRIBUTE, newCart));
+        return getCartName()
+                .flatMap(cartName ->
+                        getCart(session)
+                                .map(ReactiveCart::clear)
+                                .doOnNext(newCart -> session.getAttributes().put(cartName, newCart))
+                );
     }
 
     public Flux<ItemDTO> getCartItems(WebSession session) {

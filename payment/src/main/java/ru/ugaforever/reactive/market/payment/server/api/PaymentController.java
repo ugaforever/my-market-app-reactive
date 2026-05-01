@@ -3,6 +3,7 @@ package ru.ugaforever.reactive.market.payment.server.api;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -24,6 +25,7 @@ public class PaymentController implements PaymentsApi {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('SERVICE')")
     public Mono<ResponseEntity<PaymentResponse>> processPayment(Mono<PaymentRequest> paymentRequest,
                                                                 ServerWebExchange exchange) {
 

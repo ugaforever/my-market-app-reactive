@@ -1,5 +1,22 @@
 services:
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: keycloak
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "9092:8080"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9092/health/ready" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
   redis:
     image: redis:7.4.2-bookworm
     container_name: redis
@@ -17,49 +34,49 @@ services:
       - market-network
     restart: unless-stopped
 
-  payment:
-    image: eclipse-temurin:21-jre-alpine
-    container_name: payment
-    ports:
-      - "9091:9091"
-    volumes:
-      - ./payment/target/payment-1.0.0-SNAPSHOT.jar:/app/app.jar
-    working_dir: /app
-    command: java -jar app.jar
-    environment:
-    - SERVER_PORT=9091
-    - SPRING_DATA_REDIS_HOST=redis
-    - SPRING_DATA_REDIS_PORT=6379
-    - SERVER_ADDRESS=0.0.0.0
-    depends_on:
-      redis:
-        condition: service_healthy
-    networks:
-      - market-network
-    restart: unless-stopped
-
-  backend:
-    image: eclipse-temurin:21-jre-alpine
-    container_name: backend
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./backend/target/backend-1.0.0-SNAPSHOT.jar:/app/app.jar
-    working_dir: /app
-    command: java -jar app.jar
-    environment:
-    - SERVER_PORT=9090
-    - SPRING_DATA_REDIS_HOST=redis
-    - SPRING_DATA_REDIS_PORT=6379
-    - PAYMENT_SERVICE_URL=http://payment:9091/api/v1
-    depends_on:
-      redis:
-        condition: service_healthy
-      payment:
-        condition: service_started
-    networks:
-      - market-network
-    restart: unless-stopped
+#  payment:
+#    image: eclipse-temurin:21-jre-alpine
+#    container_name: payment
+#    ports:
+#      - "9091:9091"
+#    volumes:
+#      - ./payment/target/payment-1.0.0-SNAPSHOT.jar:/app/app.jar
+#    working_dir: /app
+#    command: java -jar app.jar
+#    environment:
+#    - SERVER_PORT=9091
+#    - SPRING_DATA_REDIS_HOST=redis
+#    - SPRING_DATA_REDIS_PORT=6379
+#    - SERVER_ADDRESS=0.0.0.0
+#    depends_on:
+#      redis:
+#        condition: service_healthy
+#    networks:
+#      - market-network
+#    restart: unless-stopped
+#
+#  backend:
+#    image: eclipse-temurin:21-jre-alpine
+#    container_name: backend
+#    ports:
+#      - "9090:9090"
+#    volumes:
+#      - ./backend/target/backend-1.0.0-SNAPSHOT.jar:/app/app.jar
+#    working_dir: /app
+#    command: java -jar app.jar
+#    environment:
+#    - SERVER_PORT=9090
+#    - SPRING_DATA_REDIS_HOST=redis
+#    - SPRING_DATA_REDIS_PORT=6379
+#    - PAYMENT_SERVICE_URL=http://payment:9091/api/v1
+#    depends_on:
+#      redis:
+#        condition: service_healthy
+#      payment:
+#        condition: service_started
+#    networks:
+#      - market-network
+#    restart: unless-stopped
 
 networks:
   market-network:

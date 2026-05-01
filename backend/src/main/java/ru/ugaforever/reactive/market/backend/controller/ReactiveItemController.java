@@ -3,6 +3,8 @@ package ru.ugaforever.reactive.market.backend.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +36,15 @@ public class ReactiveItemController {
             @RequestParam(required = false, defaultValue = "NO") String sort,
             @RequestParam(required = false, defaultValue = "1") int pageNumber,
             @RequestParam(required = false, defaultValue = "5") int pageSize,
-            WebSession session) {
+            WebSession session,
+            Authentication authentication) {
 
         if (pageNumber < 1) {
             pageNumber = 1;
         }
+
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
+        String username = isAuthenticated ? authentication.getName() : null;
 
         Sort springSort = ItemUtils.convertToSpringSort(sort);
 
@@ -67,11 +73,16 @@ public class ReactiveItemController {
                                             .modelAttribute("paging", updatedPage)
                                             .modelAttribute("search", search)
                                             .modelAttribute("sort", sort)
+                                            .modelAttribute("authenticated", isAuthenticated)
+                                            .modelAttribute("username", username)
                                             .build();
                                 })
                 )
                 .switchIfEmpty(Mono.just(
-                        Rendering.view("items").build()
+                        Rendering.view("items")
+                                .modelAttribute("authenticated", isAuthenticated)
+                                .modelAttribute("username", username)
+                                .build()
                 ));
     }
 
@@ -88,6 +99,7 @@ public class ReactiveItemController {
     }
 
     //Страница с конкретным товаром
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/items/{id}")
     public Mono<String> getItemById(@PathVariable Long id,
                                     WebSession session,
@@ -106,6 +118,7 @@ public class ReactiveItemController {
 
 
     //Уменьшение/увеличение количества товара в корзине со страницы товаров в корзине
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/items")
     public Mono<Rendering> handleItemAction(
             @RequestParam Long id,
@@ -129,6 +142,7 @@ public class ReactiveItemController {
     }
 
     //Уменьшение/увеличение количества товара в корзине со страницы товара
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/items/{id}")
     public Mono<Rendering>  handleItemActionById(
             @PathVariable Long id,
@@ -152,6 +166,7 @@ public class ReactiveItemController {
     }
 
     //Добавить товар
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/items/{id}/plus")
     public Mono<Rendering> plusItem(@PathVariable Long id, WebSession session) {
         return cartService.plusItem(session, id)
@@ -159,6 +174,7 @@ public class ReactiveItemController {
     }
 
     //Убавить товар
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/items/{id}/minus")
     public Mono<Rendering> minusItem(@PathVariable Long id, WebSession session) {
         return cartService.minusItem(session, id)
@@ -166,6 +182,7 @@ public class ReactiveItemController {
     }
 
     //Добавить в корзину (для кнопки CART)
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/items/{id}/add")
     public Mono<Rendering> addToCart(@PathVariable Long id, WebSession session) {
         return cartService.plusItem(session, id)

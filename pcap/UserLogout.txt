@@ -1,0 +1,29 @@
+1. Пользователь инициирует выход
+POST "/logout"
+
+2. Spring Security обрабатывает logout
+
+	Очищает SecurityContext
+	Инвалидирует WebSession (локальную сессию)
+	Удаляет cookie JSESSIONID
+	Возвращает редирект (/)
+
+3. Hедирект на Keycloak logout endpoint
+http://localhost:9092/realms/my-market-app/protocol/openid-connect/logout?
+          id_token_hint=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiw...&
+          post_logout_redirect_uri=http://localhost:9090
+
+	Keycloak завершает SSO-сессию:
+		Валидирует id_token_hint		
+		Удаляет все свои куки (сессионные)
+		Возвращает 302 Found с редиректом обратно в backend
+
+4. Браузер следует редиректу
+GET "/"
+
+5. Spring обрабатывает запрос главной страницы
+
+
+P.S.: после такого logout сессии пользователя очищены как в Spring приложении локально (на самом backend),
+так и на keycloak (полезно если он используется как SSO для мультисервисной архитектуры)
+

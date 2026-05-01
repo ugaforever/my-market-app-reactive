@@ -6,6 +6,12 @@ spring:
     host: ${SPRING_DATA_REDIS_HOST:localhost}
     port: ${SPRING_DATA_REDIS_PORT:6379}
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9092/realms/my-market-app
+
 server:
   port: ${SERVER_PORT:9091}
   address: ${SERVER_ADDRESS:0.0.0.0}

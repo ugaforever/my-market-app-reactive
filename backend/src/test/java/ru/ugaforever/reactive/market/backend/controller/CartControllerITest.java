@@ -7,11 +7,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import ru.ugaforever.reactive.market.backend.config.ReactiveDatabaseInitializer;
+import ru.ugaforever.reactive.market.backend.config.TestSecurityConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@Import(ReactiveDatabaseInitializer.class)
+@Import({ReactiveDatabaseInitializer.class, TestSecurityConfiguration.class})
 @AutoConfigureWebTestClient
 class CartControllerITest {
 

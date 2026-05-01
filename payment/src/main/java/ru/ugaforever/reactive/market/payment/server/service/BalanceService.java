@@ -1,5 +1,6 @@
 package ru.ugaforever.reactive.market.payment.server.service;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import ru.ugaforever.reactive.market.payment.server.domain.BalanceResponse;
@@ -11,13 +12,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@PreAuthorize("hasAuthority('SERVICE')")
 public class BalanceService {
     private final Map<String, BigDecimal> balances = new ConcurrentHashMap<>();
 
     public Mono<BalanceResponse> getBalance(String accountId) {
 
         // в рамках учебного проекта
-        // пользователь генерируется на backend для каждой новой WebSession
+        // accountId это UUID пользователя зарегистированного в Keycloak
         // пополняем по умолчанию
         balances.computeIfAbsent(accountId, key -> new BigDecimal(5000));
 
