@@ -1,4 +1,4 @@
-# Веб-приложение «Витрина интернет-магазина» с использованием Spring Boot в реактивном стиле c Redis кэшем товаров и RESTfull серсивом оплаты и аутентификацией и авторизацией 
+# Веб-приложение «Витрина интернет-магазина» с использованием Spring Boot в реактивном стиле c Redis кэшем товаров и RESTful серсивом оплаты и аутентификацией и авторизацией 
 
 Проект создан в рамках обучения на курсе **Мидл Java-разработчик** от **practicum.yandex.ru**.
 
@@ -24,7 +24,7 @@ https://github.com/ugaforever/market-backend-reactive/tree/module_two_sprint_sev
 
 ```bash
 # В корневую директорию проекта
-cd ./my-market-app-reactive
+cd ./market-backend-reactive
 
 # Запуск контейнеров redis и keycloak
 docker compose up -d
@@ -48,7 +48,7 @@ http://localhost:9092/realms/my-market-app/.well-known/openid-configuration
 
 ```bash
 # В корневую директорию проекта
-cd ./my-market-app-reactive
+cd ./market-backend-reactive
 
 # Сборка всего мультипроекта
 ./mvnw clean package
