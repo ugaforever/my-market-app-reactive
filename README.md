@@ -7,7 +7,7 @@
 
 Отчет о проделанной работе в Pull request.
 
-https://github.com/ugaforever/my-market-app-reactive/tree/module_two_sprint_seven_branch
+https://github.com/ugaforever/market-backend-reactive/tree/module_two_sprint_seven_branch
 
 ## Стек
 - Java 21, Maven
