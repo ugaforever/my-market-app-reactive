@@ -3,11 +3,11 @@
 Проект создан в рамках обучения на курсе **Мидл Java-разработчик** от **practicum.yandex.ru**.
 
 ## Задание
-В существующий проект «Витрина интернет-магазина» с RESTful-сервисом платежей, OpenAPI, Redis в качестве кеша товаров внедрить аутентификацию и авторизацию.
+В существующий проект «Витрина интернет-магазина» с RESTful-сервисом платежей, OpenAPI, Redis в качестве кеша товаров (https://github.com/ugaforever/market-backend-reactive/tree/module_two_sprint_seven_branch)
+внедрить аутентификацию и авторизацию (https://github.com/ugaforever/market-backend-reactive/tree/module_two_sprint_eight_branch).
 
 Отчет о проделанной работе в Pull request (https://github.com/ugaforever/market-backend-reactive/pull/6)
 
-https://github.com/ugaforever/market-backend-reactive/tree/module_two_sprint_seven_branch
 
 ## Стек
 - Java 21, Maven
